@@ -1,0 +1,67 @@
+┌──────────────────┬───────────────────────────────────────────────────────────┬─────────┬─────────┬─────────┬─────────┐
+│   column_name    │                        column_type                        │  null   │   key   │ default │  extra  │
+│     varchar      │                          varchar                          │ varchar │ varchar │ varchar │ varchar │
+├──────────────────┼───────────────────────────────────────────────────────────┼─────────┼─────────┼─────────┼─────────┤
+│ diseaseId        │ VARCHAR                                                   │ YES     │ NULL    │ NULL    │ NULL    │
+│ targetId         │ VARCHAR                                                   │ YES     │ NULL    │ NULL    │ NULL    │
+│ aggregationType  │ VARCHAR                                                   │ YES     │ NULL    │ NULL    │ NULL    │
+│ aggregationValue │ VARCHAR                                                   │ YES     │ NULL    │ NULL    │ NULL    │
+│ associationScore │ DOUBLE                                                    │ YES     │ NULL    │ NULL    │ NULL    │
+│ evidenceCount    │ BIGINT                                                    │ YES     │ NULL    │ NULL    │ NULL    │
+│ timeseries       │ STRUCT("year" INTEGER, associationScore DOUBLE, novelty … │ YES     │ NULL    │ NULL    │ NULL    │
+│ currentNovelty   │ DOUBLE                                                    │ YES     │ NULL    │ NULL    │ NULL    │
+└──────────────────┴───────────────────────────────────────────────────────────┴─────────┴─────────┴─────────┴─────────┘
+
+┌─────────┐
+│ n_rows  │
+│  int64  │
+├─────────┤
+│ 4732211 │
+└─────────┘
+
+┌──────────────┬─────────────────┬─────────────────┬───┬───────────────┬────────────────────────┬──────────────────────┐
+│  diseaseId   │    targetId     │ aggregationType │ … │ evidenceCount │       timeseries       │    currentNovelty    │
+│   varchar    │     varchar     │     varchar     │ … │     int64     │ struct("year" integer… │        double        │
+├──────────────┼─────────────────┼─────────────────┼───┼───────────────┼────────────────────────┼──────────────────────┤
+│ DOID_0050890 │ ENSG00000059915 │ datasourceId    │ … │             1 │ [{'year': 2022, 'asso… │ 0.010715719418879976 │
+│ DOID_0050890 │ ENSG00000084674 │ datasourceId    │ … │             4 │ [{'year': NULL, 'asso… │ 0.00132745725467406… │
+│ DOID_0050890 │ ENSG00000110768 │ datasourceId    │ … │            17 │ [{'year': 2023, 'asso… │ 0.00401542296603307… │
+│ DOID_0050890 │ ENSG00000138207 │ datasourceId    │ … │             1 │ [{'year': 2022, 'asso… │  0.02678929854719994 │
+│ DOID_0050890 │ ENSG00000142549 │ datasourceId    │ … │             3 │ [{'year': 2020, 'asso… │ 0.013245819837226641 │
+└──────────────┴─────────────────┴─────────────────┴───┴───────────────┴────────────────────────┴──────────────────────┘
+  5 rows                                                                                           8 columns (6 shown)
+
+┌───────────┬────────────┬───────────┐
+│ n_targets │ n_diseases │ n_sources │
+│   int64   │   int64    │   int64   │
+├───────────┼────────────┼───────────┤
+│     31275 │      26288 │        20 │
+└───────────┴────────────┴───────────┘
+
+┌─────────────────────┬─────────┐
+│       source        │ n_edges │
+│       varchar       │  int64  │
+├─────────────────────┼─────────┤
+│ europepmc           │ 2510811 │
+│ gwas_credible_sets  │  949600 │
+│ impc                │  838318 │
+│ expression_atlas    │  166503 │
+│ cancer_gene_census  │   91572 │
+│ clinical_precedence │   66282 │
+│ eva                 │   41347 │
+│ genomics_england    │   12536 │
+│ crispr_screen       │   10960 │
+│ gene_burden         │    7729 │
+│ orphanet            │    7232 │
+│ uniprot_literature  │    6574 │
+│ uniprot_variants    │    5126 │
+│ gene2phenotype      │    4915 │
+│ clingen             │    3824 │
+│ reactome            │    2928 │
+│ intogen             │    2595 │
+│ eva_somatic         │    2373 │
+│ crispr              │     517 │
+│ cancer_biomarkers   │     469 │
+└─────────────────────┴─────────┘
+  20 rows             2 columns
+

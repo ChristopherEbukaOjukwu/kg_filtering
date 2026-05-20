@@ -1,0 +1,52 @@
+This is a clean and decisive robustness result. H2 doesn't just survive across thresholds — its central finding *strengthens monotonically* as filters become more stringent.
+
+## What the robustness table shows
+
+**Fold-over-independence (model-free)** — the simplest version of the H2 finding:
+
+```
+Threshold                    Fold over independence
+Permissive (F1≥0.2)          4.2×
+Default    (F1≥0.5)         13.0×
+Stringent  (F1≥0.8)         25.8×
+Stringent F2 (≥3 sources)   56.3×
+```
+
+The fully-stacked filter cell has between 4× and 56× more pairs than independent filtering would predict, depending on threshold setting. **The "compounding" effect is real across every setting tested.** The chapter's claim is robust.
+
+**F1×F2 interaction coefficient** is the most diagnostic:
+
+```
+Permissive:    β = 2.00,    exp(β) =       7.4×
+Default:       β = 3.30,    exp(β) =      27.1×
+Stringent:     β = 10.46,   exp(β) =  35,030×   ← driven by sparse cells
+Stringent F2:  β = 4.97,    exp(β) =     143×
+```
+
+The Stringent F1 setting produces an extreme β = 10.5 / exp(β) = 35,030, but that number is being driven by the three empty cells and the +0.5 continuity correction. In practical terms it just means "the interaction is so strong it can't be precisely estimated — effectively all stringent-F1 survivors are also F2 survivors." Report it as "≥ 10" rather than as a specific value.
+
+The Permissive setting (β = 2.0, exp(β) = 7.4) is the least extreme but still **way above your preregistered threshold of |β| ≥ 0.3**. Even at the most permissive published threshold, F1 and F2 co-survival is 7× the independence baseline.
+
+## A note on F1×F4 at the Permissive threshold
+
+One unexpected pattern worth flagging: at F1≥0.2, the F1×F4 interaction (β = 3.67, exp = 39×) is *larger* than F1×F2. At Default and Stringent settings, F1×F2 dominates. At Permissive, F1×F4 dominates.
+
+The interpretation: when F1 is lenient (≥ 0.2), many non-protein-coding pairs creep in (lncRNAs with modest scores), so the F1×F4 interaction has more room to act — it picks up the strong filtering effect of "is this protein-coding *given* this is a strong-ish-evidence pair." When F1 is strict, almost all F1-passers are already protein-coding by construction, so F4 has less marginal work to do — the F1×F2 effect dominates instead.
+
+This is a useful detail for the discussion. The dominant interaction term shifts with threshold, but the *existence* of strong non-linear compounding is invariant.
+
+## How the chapter writes this up
+
+Robustness section, succinct version:
+
+> *To assess threshold dependence, we re-ran the factorial at three F1 thresholds spanning the range of values reported in published gene-disease KG analyses (0.2: Vitsios et al. 2024; 0.5: this work; 0.8: The Hyve 2024) and one alternative F2 specification (≥3 sources). The fully-stacked F1∧F2∧F4 cell contained between 4.2× and 56× more pairs than independent filtering would predict, with the over-representation increasing monotonically with filter stringency. All three pairwise interaction coefficients remained large and positive across all settings (|β| ≥ 1.2 in every case). The dominant interaction shifted with threshold — F1×F4 dominated at permissive settings, F1×F2 at default and stringent settings — but the overall pattern of non-linear compounding was invariant across the parameter range tested.*
+
+That's a defensible robustness result, and it pre-empts every reasonable methodological objection a reviewer would raise about your F1 = 0.5 choice.
+
+## Where you stand now
+
+- **H1:** ✓ supported, large effects across all filters
+- **H2:** ✓ supported at default, ✓ robust across permissive/stringent thresholds
+- **H3:** ✓ supported, substantial residual structure, interpretable under-survivor pattern
+- **F3 (LCC):** documented as near-null effect — methodological finding
+- **F4 (protein-coding):** acts as implicit attention filter as well as biotype filter

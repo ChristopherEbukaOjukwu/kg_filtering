@@ -1,0 +1,24 @@
+What the table shows
+Filter   Δ log-units    Cliff δ    Interpretation
+F1            1.720       0.636    Survivors have ~5.6× more publications than dropped
+F2            2.158       0.780    Survivors have ~8.7× more publications than dropped
+F4            2.465       0.835    Survivors have ~11.7× more publications than dropped
+All three filters exceed your preregistered threshold (Δ ≥ 0.5 log-units) by 3-5×. All three p-values are computationally 
+indistinguishable from zero. Cliff's δ values of 0.6-0.8 are very large effects by conventional standards (anything above 0.474 is "large").
+H1 is supported decisively for every filter.
+
+The F4 result is the most interesting finding here
+Look at the ordering. The largest attention bias comes from F4 (protein-coding only), not from F1 or F2. 
+The filter that's supposed to be a biotype restriction — categorically different from "evidence quality" — actually carries a 
+bigger attention gap than either evidence-based filter.
+The numbers in plain terms:
+Protein-coding survivors have a mean log-pubs of 3.80 (~45 publications per gene).
+Non-protein-coding dropped have a mean log-pubs of 1.34 (~3.8 publications per gene).
+This is the "curation infrastructure bias" we discussed earlier, now quantified at the cleanest possible level. The biotype filter, 
+framed as a categorical structural restriction, is in practice an attention filter — because the same forces that drive what gets 
+named "protein-coding" also drive what gets published.
+
+A subtlety worth flagging in your methods
+The F4 result has a measurement artifact embedded in it. Recall from earlier: protein-coding genes had 97% gene2pubmed coverage, lncRNAs 
+had 20%, pseudogenes ~30%. Some of the F4 attention gap reflects differential curation of publication counts, not differential underlying 
+research interest.

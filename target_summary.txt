@@ -1,0 +1,129 @@
+┌─────────────────────┬────────────────────────────────────────────────────────┬─────────┬─────────┬─────────┬─────────┐
+│     column_name     │                      column_type                       │  null   │   key   │ default │  extra  │
+│       varchar       │                        varchar                         │ varchar │ varchar │ varchar │ varchar │
+├─────────────────────┼────────────────────────────────────────────────────────┼─────────┼─────────┼─────────┼─────────┤
+│ id                  │ VARCHAR                                                │ YES     │ NULL    │ NULL    │ NULL    │
+│ approvedSymbol      │ VARCHAR                                                │ YES     │ NULL    │ NULL    │ NULL    │
+│ biotype             │ VARCHAR                                                │ YES     │ NULL    │ NULL    │ NULL    │
+│ transcriptIds       │ VARCHAR[]                                              │ YES     │ NULL    │ NULL    │ NULL    │
+│ transcripts         │ STRUCT(transcriptId VARCHAR, biotype VARCHAR, uniprot… │ YES     │ NULL    │ NULL    │ NULL    │
+│ canonicalTranscript │ STRUCT(id VARCHAR, chromosome VARCHAR, "start" BIGINT… │ YES     │ NULL    │ NULL    │ NULL    │
+│ canonicalExons      │ VARCHAR[]                                              │ YES     │ NULL    │ NULL    │ NULL    │
+│ genomicLocation     │ STRUCT(chromosome VARCHAR, "start" BIGINT, "end" BIGI… │ YES     │ NULL    │ NULL    │ NULL    │
+│ alternativeGenes    │ VARCHAR[]                                              │ YES     │ NULL    │ NULL    │ NULL    │
+│ approvedName        │ VARCHAR                                                │ YES     │ NULL    │ NULL    │ NULL    │
+│     ·               │    ·                                                   │  ·      │  ·      │  ·      │  ·      │
+│     ·               │    ·                                                   │  ·      │  ·      │  ·      │  ·      │
+│     ·               │    ·                                                   │  ·      │  ·      │  ·      │  ·      │
+│ constraint          │ STRUCT(constraintType VARCHAR, score FLOAT, exp FLOAT… │ YES     │ NULL    │ NULL    │ NULL    │
+│ tep                 │ STRUCT(targetFromSourceId VARCHAR, description VARCHA… │ YES     │ NULL    │ NULL    │ NULL    │
+│ proteinIds          │ STRUCT(id VARCHAR, "source" VARCHAR)[]                 │ YES     │ NULL    │ NULL    │ NULL    │
+│ dbXrefs             │ STRUCT(id VARCHAR, "source" VARCHAR)[]                 │ YES     │ NULL    │ NULL    │ NULL    │
+│ chemicalProbes      │ STRUCT(targetFromSourceId VARCHAR, id VARCHAR, drugFr… │ YES     │ NULL    │ NULL    │ NULL    │
+│ homologues          │ STRUCT(speciesId VARCHAR, speciesName VARCHAR, homolo… │ YES     │ NULL    │ NULL    │ NULL    │
+│ tractability        │ STRUCT(modality VARCHAR, id VARCHAR, "value" BOOLEAN)… │ YES     │ NULL    │ NULL    │ NULL    │
+│ safetyLiabilities   │ STRUCT("event" VARCHAR, eventId VARCHAR, effects STRU… │ YES     │ NULL    │ NULL    │ NULL    │
+│ pathways            │ STRUCT(pathwayId VARCHAR, pathway VARCHAR, topLevelTe… │ YES     │ NULL    │ NULL    │ NULL    │
+│ tss                 │ BIGINT                                                 │ YES     │ NULL    │ NULL    │ NULL    │
+└─────────────────────┴────────────────────────────────────────────────────────┴─────────┴─────────┴─────────┴─────────┘
+  30 rows (20 shown)                                                                                         6 columns
+
+┌────────┐
+│ n_rows │
+│ int64  │
+├────────┤
+│  78691 │
+└────────┘
+
+┌────────────────────────────────────┬───────┐
+│              biotype               │   n   │
+│              varchar               │ int64 │
+├────────────────────────────────────┼───────┤
+│ lncRNA                             │ 34880 │
+│ protein_coding                     │ 20097 │
+│ processed_pseudogene               │  9487 │
+│ misc_RNA                           │  2207 │
+│ unprocessed_pseudogene             │  1949 │
+│ snRNA                              │  1901 │
+│ miRNA                              │  1879 │
+│ transcribed_unprocessed_pseudogene │  1587 │
+│ transcribed_processed_pseudogene   │  1149 │
+│                                    │  1019 │
+│    ·                               │     · │
+│    ·                               │     · │
+│    ·                               │     · │
+│ ribozyme                           │     8 │
+│ TR_C_gene                          │     6 │
+│ TR_D_gene                          │     5 │
+│ sRNA                               │     5 │
+│ TR_J_pseudogene                    │     4 │
+│ vault_RNA                          │     4 │
+│ IG_J_pseudogene                    │     3 │
+│ translated_processed_pseudogene    │     2 │
+│ Mt_rRNA                            │     2 │
+│ IG_pseudogene                      │     1 │
+└────────────────────────────────────┴───────┘
+  37 rows (20 shown)               2 columns
+
+┌─────────┬───────┐
+│  chrom  │   n   │
+│ varchar │ int64 │
+├─────────┼───────┤
+│ 1       │  7090 │
+│ 2       │  5686 │
+│ 6       │  4230 │
+│ 11      │  4166 │
+│ 3       │  4158 │
+│ 7       │  3957 │
+│ 5       │  3946 │
+│ 12      │  3860 │
+│ 17      │  3780 │
+│ 4       │  3577 │
+│ ·       │    ·  │
+│ ·       │    ·  │
+│ ·       │    ·  │
+│ X       │  2958 │
+│ 15      │  2818 │
+│ 14      │  2797 │
+│ 13      │  2001 │
+│ 20      │  1970 │
+│ 22      │  1747 │
+│ 18      │  1653 │
+│ 21      │  1134 │
+│ Y       │   672 │
+│ MT      │    37 │
+└─────────┴───────┘
+      25 rows    
+    (20 shown)    
+
+┌─────────────────┬────────────────┬────────────────────────────────────────────┬────────────────┬─────────┬───────────┐
+│       id        │ approvedSymbol │                approvedName                │    biotype     │  chrom  │ start_pos │
+│     varchar     │    varchar     │                  varchar                   │    varchar     │ varchar │   int64   │
+├─────────────────┼────────────────┼────────────────────────────────────────────┼────────────────┼─────────┼───────────┤
+│ ENSG00000000457 │ SCYL3          │ SCY1 like pseudokinase 3                   │ protein_coding │ 1       │ 169846981 │
+│ ENSG00000001167 │ NFYA           │ nuclear transcription factor Y subunit al… │ protein_coding │ 6       │  41072946 │
+│ ENSG00000001460 │ STPG1          │ sperm tail PG-rich repeat containing 1     │ protein_coding │ 1       │  24355886 │
+│ ENSG00000001629 │ ANKIB1         │ ankyrin repeat and IBR domain containing 1 │ protein_coding │ 7       │  92245973 │
+│ ENSG00000003096 │ KLHL13         │ kelch like family member 13                │ protein_coding │ X       │ 117897794 │
+│ ENSG00000003249 │ DBNDD1         │ dysbindin domain containing 1              │ protein_coding │ 16      │  90004871 │
+│ ENSG00000004779 │ NDUFAB1        │ NADH:ubiquinone oxidoreductase subunit AB1 │ protein_coding │ 16      │  23581014 │
+│ ENSG00000005100 │ DHX33          │ DEAH-box helicase 33                       │ protein_coding │ 17      │   5440917 │
+│ ENSG00000005189 │ REXO5          │ RNA exonuclease 5                          │ protein_coding │ 16      │  20806157 │
+│ ENSG00000005238 │ ATOSB          │ atos homolog B                             │ protein_coding │ 9       │  35104112 │
+└─────────────────┴────────────────┴────────────────────────────────────────────┴────────────────┴─────────┴───────────┘
+  10 rows                                                                                                    6 columns
+
+┌───────┬────────────────┬──────────────────┬──────────────────┬─────────┐
+│ total │ has_constraint │ has_target_class │ has_tractability │ has_tep │
+│ int64 │     int64      │      int64       │      int64       │  int64  │
+├───────┼────────────────┼──────────────────┼──────────────────┼─────────┤
+│ 78691 │          18608 │             6211 │            18869 │      41 │
+└───────┴────────────────┴──────────────────┴──────────────────┴─────────┘
+
+┌───────┬────────────┬────────────────────┬──────────────────┐
+│ total │ has_any_go │  mean_n_go_terms   │ mean_n_pathways  │
+│ int64 │   int128   │       double       │      double      │
+├───────┼────────────┼────────────────────┼──────────────────┤
+│ 78691 │      21130 │ 32.254330336015144 │ 4.25273379406876 │
+└───────┴────────────┴────────────────────┴──────────────────┘
+

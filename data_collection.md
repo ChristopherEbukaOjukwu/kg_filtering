@@ -15,3 +15,7 @@ This gives evidence-type scores. Used for F2: ≥ N data types.
 3. Associations - direct (overall score): 
 This gives the main gene–disease edge score. Used for F1: score ≥ threshold.
 "wget --recursive --no-parent --no-host-directories --cut-dirs 6 ftp://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/output/association_overall_direct ."
+
+4. Target:
+This is the analogue of the overall file for nodes: one row per Ensembl gene ID with the canonical metadata (biotype, chromosome, protein class, approved symbol, etc.)
+"wget --recursive --no-parent --no-host-directories --cut-dirs 6 ftp://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/output/target ."

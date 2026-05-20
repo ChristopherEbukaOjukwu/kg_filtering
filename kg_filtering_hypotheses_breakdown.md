@@ -1,4 +1,4 @@
-# Chapter 3: Filters in Target–Disease Knowledge Graphs
+#Filters in Target–Disease Knowledge Graphs
 
 ## Core framing
 

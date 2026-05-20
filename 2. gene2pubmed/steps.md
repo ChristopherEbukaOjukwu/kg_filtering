@@ -122,3 +122,9 @@ NOTE:
 What gene_attention.parquet contains:
 38,548 rows. Each row is one Ensembl ID that succeeded in the gene2ensembl mapping. Those 38,548 IDs are all targets in OT's vocabulary, but they are not all the targets in OT.
 The OT Target file has ~78,691 targets. The gene_attention.parquet has 38,548. The missing ~40,000 are the targets that didn't map to NCBI Gene IDs — mostly lncRNAs (28,000 unmapped), pseudogenes (~9,000 unmapped), and a handful of others.
+
+
+## Deduplicate gene_attention.parquet
+When running canonical_table.py, we found that attn_rows = 38,548 and attn_unique = 38,267 showing that the attention file has 281 duplicate ensembl_id rows. Each duplicate creates a fanout on the LEFT JOIN, multiplying every association of that gene.
+A few hundred genes map to multiple NCBI Gene IDs in gene2ensembl (alternative loci, X/Y pseudoautosomal copies, etc.), and gene_attention.parquet kept one row per (ensembl_id, ncbi_gene_id) pair instead of collapsing.
+To fix this, we deduplicate the attention table by summing publications across NCBI IDs that map to the same Ensembl gene. That way, we're not just dropping data, we're aggregating it correctly.

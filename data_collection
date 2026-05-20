@@ -1,0 +1,5 @@
+# Initial data collection from OT
+Three datasets were downloaded from "https://platform.opentargets.org/downloads/association_by_datasource_direct/access" on 5/20/2026:
+1. Associations - direct (by data source): wget --recursive --no-parent --no-host-directories --cut-dirs 6 ftp://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/output/association_by_datasource_direct .
+2. Associations - direct (by data type): wget --recursive --no-parent --no-host-directories --cut-dirs 6 ftp://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/output/association_by_datatype_direct .
+3. Associations - direct (overall score): wget --recursive --no-parent --no-host-directories --cut-dirs 6 ftp://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/output/association_overall_direct .

@@ -67,5 +67,5 @@
 └────────────────┴────────────┘
   10 rows           2 columns
 
-NOTE
+## NOTE
 STRING is 90% of the file. The broad PPI degree is essentially a STRING-derived metric, and that's the explicit caveat in the H3 model: it captures "richness of characterization in interaction space" rather than "number of experimentally-verified physical partners."

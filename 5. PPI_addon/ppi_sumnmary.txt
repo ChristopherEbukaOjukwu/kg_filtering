@@ -23,6 +23,16 @@
 │ 14618053 │
 └──────────┘
 
+┌────────────────┬──────────┐
+│ sourceDatabase │  n_rows  │
+│    varchar     │  int64   │
+├────────────────┼──────────┤
+│ string         │ 13210738 │
+│ intact         │  1311132 │
+│ reactome       │    56191 │
+│ signor         │    39992 │
+└────────────────┴──────────┘
+
 ┌────────────────┬─────────────────┬─────────┬────────────────────┬───┬───────────────────────┬──────────────────────┬───────┬─────────┐
 │ sourceDatabase │     targetA     │  intA   │ intABiologicalRole │ … │       speciesA        │       speciesB       │ count │ scoring │
 │    varchar     │     varchar     │ varchar │      varchar       │ … │ struct(mnemonic varc… │ struct(mnemonic var… │ int64 │ double  │
@@ -56,3 +66,6 @@
 │ ALB            │       5452 │
 └────────────────┴────────────┘
   10 rows           2 columns
+
+NOTE
+STRING is 90% of the file. The broad PPI degree is essentially a STRING-derived metric, and that's the explicit caveat in the H3 model: it captures "richness of characterization in interaction space" rather than "number of experimentally-verified physical partners."

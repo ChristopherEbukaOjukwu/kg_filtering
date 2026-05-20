@@ -113,4 +113,7 @@ for mapping (NCBI Gene ID ↔ Ensembl ID) and JOIN on Ensembl ID for final gene_
 
 
 
-
+At the end of this step:
+OT associations (overall, by-datatype, by-datasource)
+OT target metadata (biotype, constraint, structural features)
+External attention (gene2pubmed via gene2ensembl mapping)

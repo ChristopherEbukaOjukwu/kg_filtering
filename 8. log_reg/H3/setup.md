@@ -10,3 +10,5 @@ constraint_bin — gnomAD LOEUF decile (0-9, with 0 = most LOF-intolerant)
 log_ppi_degree = log(ppi_degree_all + 1) — interaction-space density
 chromosome — categorical, absorbs chromosomal idiosyncrasies
 Model: logistic regression. Standard, interpretable, gives you per-gene predicted survival probabilities and well-defined residuals.
+
+h3 can be run from: h3_log_reg.py

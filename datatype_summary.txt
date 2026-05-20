@@ -1,0 +1,54 @@
+┌──────────────────┬───────────────────────────────────────────────────────────┬─────────┬─────────┬─────────┬─────────┐
+│   column_name    │                        column_type                        │  null   │   key   │ default │  extra  │
+│     varchar      │                          varchar                          │ varchar │ varchar │ varchar │ varchar │
+├──────────────────┼───────────────────────────────────────────────────────────┼─────────┼─────────┼─────────┼─────────┤
+│ diseaseId        │ VARCHAR                                                   │ YES     │ NULL    │ NULL    │ NULL    │
+│ targetId         │ VARCHAR                                                   │ YES     │ NULL    │ NULL    │ NULL    │
+│ aggregationType  │ VARCHAR                                                   │ YES     │ NULL    │ NULL    │ NULL    │
+│ aggregationValue │ VARCHAR                                                   │ YES     │ NULL    │ NULL    │ NULL    │
+│ associationScore │ DOUBLE                                                    │ YES     │ NULL    │ NULL    │ NULL    │
+│ evidenceCount    │ BIGINT                                                    │ YES     │ NULL    │ NULL    │ NULL    │
+│ timeseries       │ STRUCT("year" INTEGER, associationScore DOUBLE, novelty … │ YES     │ NULL    │ NULL    │ NULL    │
+│ currentNovelty   │ DOUBLE                                                    │ YES     │ NULL    │ NULL    │ NULL    │
+└──────────────────┴───────────────────────────────────────────────────────────┴─────────┴─────────┴─────────┴─────────┘
+
+┌─────────┐
+│ n_rows  │
+│  int64  │
+├─────────┤
+│ 4705908 │
+└─────────┘
+
+┌──────────────┬─────────────────┬─────────────────┬───┬───────────────┬────────────────────────┬──────────────────────┐
+│  diseaseId   │    targetId     │ aggregationType │ … │ evidenceCount │       timeseries       │    currentNovelty    │
+│   varchar    │     varchar     │     varchar     │ … │     int64     │ struct("year" integer… │        double        │
+├──────────────┼─────────────────┼─────────────────┼───┼───────────────┼────────────────────────┼──────────────────────┤
+│ DOID_0050890 │ ENSG00000007171 │ datatypeId      │ … │             2 │ [{'year': NULL, 'asso… │ 0.034977061231864746 │
+│ DOID_0050890 │ ENSG00000041982 │ datatypeId      │ … │             1 │ [{'year': 2012, 'asso… │ 1.1212443719005166e… │
+│ DOID_0050890 │ ENSG00000074317 │ datatypeId      │ … │          1673 │ [{'year': 1974, 'asso… │ 0.030810432797717224 │
+│ DOID_0050890 │ ENSG00000089169 │ datatypeId      │ … │             1 │ [{'year': 2025, 'asso… │ 0.015207417926897712 │
+│ DOID_0050890 │ ENSG00000091513 │ datatypeId      │ … │             4 │ [{'year': 2026, 'asso… │ 0.020824485682699425 │
+└──────────────┴─────────────────┴─────────────────┴───┴───────────────┴────────────────────────┴──────────────────────┘
+  5 rows                                                                                           8 columns (6 shown)
+
+┌───────────┬────────────┬───────────┐
+│ n_targets │ n_diseases │ n_sources │
+│   int64   │   int64    │   int64   │
+├───────────┼────────────┼───────────┤
+│     31275 │      26288 │         8 │
+└───────────┴────────────┴───────────┘
+
+┌─────────────────────┬─────────┐
+│       source        │ n_edges │
+│       varchar       │  int64  │
+├─────────────────────┼─────────┤
+│ literature          │ 2510811 │
+│ genetic_association │  997062 │
+│ animal_model        │  838318 │
+│ rna_expression      │  166503 │
+│ somatic_mutation    │   94789 │
+│ known_drug          │   66282 │
+│ genetic_literature  │   17323 │
+│ affected_pathway    │   14820 │
+└─────────────────────┴─────────┘
+

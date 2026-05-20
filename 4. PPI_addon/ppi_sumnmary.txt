@@ -1,0 +1,58 @@
+┌────────────────────┬──────────────────────────────────────────────────────────────────┬─────────┬─────────┬─────────┬─────────┐
+│    column_name     │                           column_type                            │  null   │   key   │ default │  extra  │
+│      varchar       │                             varchar                              │ varchar │ varchar │ varchar │ varchar │
+├────────────────────┼──────────────────────────────────────────────────────────────────┼─────────┼─────────┼─────────┼─────────┤
+│ sourceDatabase     │ VARCHAR                                                          │ YES     │ NULL    │ NULL    │ NULL    │
+│ targetA            │ VARCHAR                                                          │ YES     │ NULL    │ NULL    │ NULL    │
+│ intA               │ VARCHAR                                                          │ YES     │ NULL    │ NULL    │ NULL    │
+│ intABiologicalRole │ VARCHAR                                                          │ YES     │ NULL    │ NULL    │ NULL    │
+│ targetB            │ VARCHAR                                                          │ YES     │ NULL    │ NULL    │ NULL    │
+│ intB               │ VARCHAR                                                          │ YES     │ NULL    │ NULL    │ NULL    │
+│ intBBiologicalRole │ VARCHAR                                                          │ YES     │ NULL    │ NULL    │ NULL    │
+│ speciesA           │ STRUCT(mnemonic VARCHAR, scientificName VARCHAR, taxonId BIGINT) │ YES     │ NULL    │ NULL    │ NULL    │
+│ speciesB           │ STRUCT(mnemonic VARCHAR, scientificName VARCHAR, taxonId BIGINT) │ YES     │ NULL    │ NULL    │ NULL    │
+│ count              │ BIGINT                                                           │ YES     │ NULL    │ NULL    │ NULL    │
+│ scoring            │ DOUBLE                                                           │ YES     │ NULL    │ NULL    │ NULL    │
+└────────────────────┴──────────────────────────────────────────────────────────────────┴─────────┴─────────┴─────────┴─────────┘
+  11 rows                                                                                                             6 columns
+
+┌──────────┐
+│  n_rows  │
+│  int64   │
+├──────────┤
+│ 14618053 │
+└──────────┘
+
+┌────────────────┬─────────────────┬─────────┬────────────────────┬───┬───────────────────────┬──────────────────────┬───────┬─────────┐
+│ sourceDatabase │     targetA     │  intA   │ intABiologicalRole │ … │       speciesA        │       speciesB       │ count │ scoring │
+│    varchar     │     varchar     │ varchar │      varchar       │ … │ struct(mnemonic varc… │ struct(mnemonic var… │ int64 │ double  │
+├────────────────┼─────────────────┼─────────┼────────────────────┼───┼───────────────────────┼──────────────────────┼───────┼─────────┤
+│ intact         │ ENSG00000173039 │ Q04206  │ enzyme target      │ … │ {'mnemonic': human, … │ {'mnemonic': human,… │     1 │    0.54 │
+│ intact         │ ENSG00000091831 │ P03372  │ unspecified role   │ … │ {'mnemonic': human, … │ {'mnemonic': human,… │     3 │     0.6 │
+│ intact         │ ENSG00000091831 │ P03372  │ unspecified role   │ … │ {'mnemonic': human, … │ {'mnemonic': human,… │     4 │    0.64 │
+└────────────────┴─────────────────┴─────────┴────────────────────┴───┴───────────────────────┴──────────────────────┴───────┴─────────┘
+  3 rows                                                                                                          11 columns (8 shown)
+
+┌────────────────┬───────────────┬───────────────────┬────────────┐
+│ n_genes_in_ppi │ median_degree │    mean_degree    │ max_degree │
+│     int64      │    double     │      double       │   int64    │
+├────────────────┼───────────────┼───────────────────┼────────────┤
+│          20150 │         529.0 │ 673.4341439205955 │       9213 │
+└────────────────┴───────────────┴───────────────────┴────────────┘
+
+┌────────────────┬────────────┐
+│ approvedSymbol │ ppi_degree │
+│    varchar     │   int64    │
+├────────────────┼────────────┤
+│ GAPDH          │       9213 │
+│ ACTB           │       7686 │
+│ TP53           │       7381 │
+│ MYC            │       7235 │
+│ AKT1           │       7149 │
+│ CTNNB1         │       6240 │
+│ EGFR           │       5913 │
+│ JUN            │       5767 │
+│ INS            │       5465 │
+│ ALB            │       5452 │
+└────────────────┴────────────┘
+  10 rows           2 columns

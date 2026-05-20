@@ -1,0 +1,10 @@
+Targets with attention data: 24,840
+  surviving F1: 8,222
+  surviving F2: 14,733
+  surviving F4: 19,392
+
+=== H1 per-filter results ===
+Filter  Survivors    Dropped   Mean log-pubs (surv)   Mean log-pubs (drop)   Δ log-units    Cliff δ            p
+F1          8,222     16,618                  4.413                  2.693         1.720      0.636     0.00e+00
+F2         14,733     10,107                  4.141                  1.983         2.158      0.780     0.00e+00
+F4         19,392      5,448                  3.803                  1.338         2.465      0.835     0.00e+00

@@ -117,3 +117,8 @@ At the end of this step:
 OT associations (overall, by-datatype, by-datasource)
 OT target metadata (biotype, constraint, structural features)
 External attention (gene2pubmed via gene2ensembl mapping)
+
+NOTE:
+What gene_attention.parquet contains:
+38,548 rows. Each row is one Ensembl ID that succeeded in the gene2ensembl mapping. Those 38,548 IDs are all targets in OT's vocabulary, but they are not all the targets in OT.
+The OT Target file has ~78,691 targets. The gene_attention.parquet has 38,548. The missing ~40,000 are the targets that didn't map to NCBI Gene IDs — mostly lncRNAs (28,000 unmapped), pseudogenes (~9,000 unmapped), and a handful of others.

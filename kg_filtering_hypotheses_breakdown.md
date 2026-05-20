@@ -2,11 +2,9 @@
 
 ## Core framing
 
-Use **target**, not gene, because Open Targets is organized around target–disease associations.
-
 > Filters applied to target–disease KGs preferentially retain high-attention targets, and stacked filters compound this selectivity.
 
-Your unit can be either:
+Unit can be either:
 
 ```text
 Primary unit: target–disease association
@@ -76,7 +74,7 @@ low-attention targets are removed more often
 
 ## F3: Largest connected component only
 
-You build a bipartite graph:
+Build a bipartite graph:
 
 ```text
 target -- disease
@@ -84,7 +82,7 @@ target -- disease
 
 Then keep only the largest connected component.
 
-**Likely bias mechanism:** canonical targets connect to many diseases; canonical diseases connect to many targets. Rare, specific, or understudied target–disease pairs may sit in small disconnected components.
+**Likely bias mechanism:** canonical targets connect to many diseases; canonical diseases connect to many targets. Rare, specific, or understudied target–disease pairs may sit in small, disconnected components.
 
 **H1 test:**  
 Compare publication counts of targets inside vs. outside the largest connected component.
@@ -106,7 +104,7 @@ In Open Targets, this is probably better phrased as:
 
 > evidence-type or source-type constraint
 
-because Open Targets is not exactly a Hetionet-style metapath KG unless you explicitly model paths through evidence/source nodes.
+because Open Targets is not exactly a Hetionet-style metapath KG unless the paths are explicitly modeled through evidence/source nodes.
 
 Example F4 versions:
 

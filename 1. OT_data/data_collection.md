@@ -24,8 +24,8 @@ This is the analogue of the overall file for nodes: one row per Ensembl gene ID 
 Targets in data:
 A gene, in the modern definition, is just a region of DNA that gets transcribed into RNA. Whether that RNA then gets translated into a protein is a separate question, and the answer determines the gene's biotype:
 
-protein_coding: transcribed into mRNA, then translated into a protein. ~20,000 of these in humans. These are the genes most people mean colloquially when they say "gene" — insulin, hemoglobin, TP53.
-lncRNA (long non-coding RNA): transcribed into RNA, but the RNA itself is the functional product. It's never translated. Examples: XIST (which silences one X chromosome in female cells), HOTAIR, MALAT1. There are ~35,000 of these in the human genome, more than protein-coding ones — a relatively recent discovery.
-miRNA (microRNA): transcribed into very short RNAs (~22 nucleotides) that regulate the expression of other genes by binding to their mRNA. Examples: let-7, miR-21.
-snRNA, snoRNA, misc_RNA: small RNAs with various structural and processing roles in the cell.
-pseudogene: a gene that was protein-coding at some point in evolution but has accumulated mutations that broke it. The DNA sequence still resembles a real gene but it doesn't produce a functional product. Mostly. Some pseudogenes turn out to have regulatory functions, which keeps biologists employed.
+1. protein_coding: transcribed into mRNA, then translated into a protein. ~20,000 of these in humans. These are the genes most people mean colloquially when they say "gene" — insulin, hemoglobin, TP53.
+2. lncRNA (long non-coding RNA): transcribed into RNA, but the RNA itself is the functional product. It's never translated. Examples: XIST (which silences one X chromosome in female cells), HOTAIR, MALAT1. There are ~35,000 of these in the human genome, more than protein-coding ones — a relatively recent discovery.
+3. miRNA (microRNA): transcribed into very short RNAs (~22 nucleotides) that regulate the expression of other genes by binding to their mRNA. Examples: let-7, miR-21.
+4. snRNA, snoRNA, misc_RNA: small RNAs with various structural and processing roles in the cell.
+5. pseudogene: a gene that was protein-coding at some point in evolution but has accumulated mutations that broke it. The DNA sequence still resembles a real gene but it doesn't produce a functional product. Mostly. Some pseudogenes turn out to have regulatory functions, which keeps biologists employed.

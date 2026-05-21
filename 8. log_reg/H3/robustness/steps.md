@@ -1,0 +1,9 @@
+H3 robustness: curated PPI degree
+
+
+The question: does the H3 finding (large residual structure, identifiable under-survivors) depend on using STRING-inflated PPI degree, or does it hold with the curated-only network?
+
+
+If the curated-PPI model gives similar AUC, similar coefficient patterns, and overlapping under-survivor lists, the H3 result is structurally robust. If they diverge meaningfully, then PPI source dependence needs explanation.
+
+source: h3_robust.py

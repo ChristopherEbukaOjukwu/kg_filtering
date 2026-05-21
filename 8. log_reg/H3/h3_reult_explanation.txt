@@ -1,93 +1,513 @@
-This is a genuinely interesting H3 result, and not in the direction I was expecting. Let me walk through what the data is saying, because the residual lists are surprising in a useful way.
+# H3 Results
 
-## The model fit
+This is an interesting H3 result, and it is not exactly in the direction originally expected.
 
-```
-Model                        AUC       Δ vs. previous
-M0: log_pubs alone           0.766     —
-M1: + constraint             0.769     +0.003
-M2: + log_ppi                0.770     +0.001
-M3: + chromosome             0.771     +0.001
-```
+The residual lists are especially informative because they show that filtering does not simply separate well-studied genes from poorly studied genes. Instead, the results suggest a more specific pattern:
 
-**Attention does ~99% of the predictive work.** Adding constraint, PPI degree, and chromosome each contributes essentially nothing to AUC. Your structural baseline has essentially the same predictive power as attention alone.
-
-Against your preregistration's H3 criterion (AUC < 0.85), this passes: the model leaves substantial residual variance unexplained. AUC of 0.77 means there's a meaningful gap between "predicted survival" and "actual survival" for many genes.
-
-**The model is consistent with H3, but for a different reason than your outline anticipated.** The original framing assumed that structure (constraint, PPI) would carve away some of the attention signal, leaving a structural residual. Instead, attention alone has limited predictive ceiling at 0.77 — and the residuals show patterns that aren't captured by *either* attention or measured structure.
-
-## What the residual lists actually show
-
-**The under-survivors are the most telling result of the entire chapter.**
-
-Look at this list: HIF1A, NOS3, IFNG, ABCB1, MDM2, ADIPOQ, IL4, IL1A, MAPK14, CXCL8, BIRC5, GSTP1, HMGB1, HLA-DRB1, TLR2, IL-10, MKI67, HLA-B...
-
-These are not random under-attended genes. **These are some of the most-studied genes in biomedical research.** HIF1A is the master regulator of hypoxic response. NOS3 is endothelial nitric oxide synthase. IFNG, IL1A, IL4, CXCL8 are major immune cytokines. MDM2 is the canonical p53 regulator. HLA-DRB1 and HLA-B are MHC class II/I — central to the immune system. These genes have log_pubs of 7-8 (1000-3000 publications each) — well within the top 5% of human genes by attention.
-
-The model predicted survival probabilities of 0.87-0.95 for these genes. **They didn't survive F1 ∧ F2 ∧ F4.**
-
-That requires explanation. Two possibilities:
-
-1. **These genes don't have any strong, multi-source disease association.** Despite being intensively studied, the literature about them is broad rather than focused. HIF1A may be mentioned in 1000+ papers about 500 different diseases, each with a weak literature score, none crossing F1's threshold. The harmonic-sum aggregation rewards focused evidence anchors, which broadly-studied pleiotropic genes lack.
-
-2. **These genes' associations are concentrated in single-source literature evidence.** A cytokine mentioned in cancer papers, immunology papers, metabolism papers — many sources by count but each is "literature" so it counts as one source for F2.
-
-Either explanation makes the same point: **F1 ∧ F2 is not filtering for "well-studied" — it's filtering for "studied with focused, source-diverse evidence about specific diseases."** The under-survivors aren't being unfairly excluded; they're being excluded because their evidence pattern is "broad but shallow" rather than "narrow but corroborated."
-
-This is a more sophisticated story than "filters retain well-studied genes." It's: *filters retain genes whose study has crystallized into specific, multiply-sourced gene-disease claims. Genes whose study remains diffuse — even very highly-studied ones — get filtered out.*
-
-**The over-survivors confirm the mirror image.**
-
-OR10R2, OR51V1, NKPD1, RAX2, LRRC75B, MBLAC1... these are mostly olfactory receptors (the OR genes), open reading frames (C1orf141), and other very-low-attention genes. Their `log_pubs` values are 1.6-2.6, meaning fewer than 10 publications each. Yet they survived F1 ∧ F2 ∧ F4.
-
-These genes must have **a single high-quality curated entry** in OT — almost certainly from ClinGen, OMIM, or a rare-disease panel where they're definitively associated with one specific Mendelian condition. One strong source can push them over F1 (high overall score) and across F2 if combined with even one weak corroborating source.
-
-**The combined story:** the system has a *threshold effect* where evidence concentration matters more than evidence volume. A gene with 1 paper showing strong rare-disease evidence beats a gene with 1000 papers showing diffuse pleiotropic mentions.
-
-## What this means for the chapter
-
-H3 is supported with a substantially more interesting story than the original outline:
-
-> *After controlling for measured research attention, gnomAD constraint, PPI degree, and chromosome, ~22% of protein-coding targets under-survive filtering relative to baseline predictions (residual < -0.3), and ~27% over-survive (residual > +0.3). The under-survivor population is enriched for highly-studied pleiotropic genes (immune cytokines, transcription factors, master regulators) whose evidence is broad but lacks focused multi-source disease anchors. The over-survivor population is enriched for low-attention genes with single high-quality Mendelian-disease curation entries. Filters therefore preferentially retain not "well-studied genes" but "narrowly-evidenced gene-disease pairs," with the result that broadly-relevant biological hubs are systematically under-represented in filtered KGs.*
-
-That's a publishable result, and it sharpens the chapter's central argument. The bias isn't simply "attention bias amplified by filtering" — it's "**a structural mismatch between how research attention accumulates (diffusely, around hub genes) and how filters operationalize evidence quality (requiring focused multi-source convergence).**"
-
-## Constraint bin pattern worth noting
-
-A small thing worth flagging: the constraint coefficients are non-monotonic.
-
-```
-constraint_bin  coefficient    interpretation
-0 (most intolerant, ref)  0    baseline
-1                         0.09
-2                         0.09
-3                         0.25
-4                         0.33  ← peak
-5                         0.22
-6                         0.09
-7                        -0.20
-8                        -0.27
-9 (most tolerant)        -0.50
+```text
+Filters retain genes with focused, source-diverse disease evidence.
+They can remove even highly published genes when their evidence is broad, diffuse, or not concentrated around specific disease claims.
 ```
 
-The relationship between constraint and survival is **inverted-U**: moderately-constrained genes (bins 3-5) survive most, with both extremes surviving less. The bin 0 (most LOF-intolerant) genes are *not* the most likely to survive after controlling for attention — they're at the *baseline* level.
+---
 
-This is mildly counterintuitive. It might reflect that the most LOF-intolerant genes are often essential, embryonic-lethal-in-knockout, hard to study in disease contexts because perturbation is incompatible with life. Bin 9 (most tolerant) genes survive least, which is what you'd expect — they're tolerable to lose, less likely to be disease-implicated. The inverted-U is mostly the middle bins (3-5) being elevated.
+## Model Fit
 
-For the chapter, this is a sentence in the discussion, not a headline. Constraint contributes statistically but in a non-trivial way.
+| Model | AUC | Δ vs. Previous |
+|---|---:|---:|
+| M0: `log_pubs` alone | 0.766 | — |
+| M1: + constraint | 0.769 | +0.003 |
+| M2: + `log_ppi` | 0.770 | +0.001 |
+| M3: + chromosome | 0.771 | +0.001 |
 
-## Where you stand
+---
 
-H1 ✓ — strong, all three filters, large effect sizes
-H2 ✓ — strong non-linear compounding, F1×F2 the dominant interaction
-H3 ✓ — substantial residual structure exists, and the under-survivors are diagnostically interpretable as well-studied pleiotropic hubs
+## Main Model Interpretation
 
-All three hypotheses supported, all three at effect sizes well above your preregistered thresholds. The chapter has its result set.
+Publication attention does almost all of the predictive work.
 
-The remaining work is robustness checks:
+Adding structural covariates such as:
 
-1. Re-run the factorial at F1 ≥ 0.2 (permissive) and F1 ≥ 0.8 (stringent). Confirm the H2 interaction effects persist across the threshold range.
-2. Re-run H3 with `ppi_degree_curated` instead of `ppi_degree_all`. Confirm under-survivor identity doesn't depend on STRING's inclusion.
-3. (Optional but worth it) Compute how many of the top-20 under-survivors are in OMIM or ClinGen — i.e., are they *known* disease genes that filters are missing? That would land a much sharper rhetorical punch in the chapter.
+```text
+constraint
+PPI degree
+chromosome
+```
 
-Want to run robustness next, or is there anything in this H3 result you want to dig into first?
+contributes very little additional predictive power.
+
+The full model has only a small improvement over the attention-only model:
+
+```text
+AUC 0.766 → 0.771
+```
+
+This suggests that the structural baseline has nearly the same predictive power as publication attention alone.
+
+---
+
+## H3 Criterion
+
+The preregistered H3 criterion required:
+
+```text
+AUC < 0.85
+```
+
+The observed full-model AUC is:
+
+```text
+AUC = 0.771
+```
+
+Therefore, the model leaves substantial residual variance unexplained.
+
+This supports H3 because there remains a meaningful gap between:
+
+```text
+predicted survival
+```
+
+and:
+
+```text
+actual survival
+```
+
+for many genes.
+
+---
+
+# What the Residual Lists Show
+
+## Under-Survivors
+
+The under-survivors are the most informative part of the H3 result.
+
+Examples include:
+
+```text
+HIF1A
+NOS3
+IFNG
+ABCB1
+MDM2
+ADIPOQ
+IL4
+IL1A
+MAPK14
+CXCL8
+BIRC5
+GSTP1
+HMGB1
+HLA-DRB1
+TLR2
+IL10
+MKI67
+HLA-B
+```
+
+These are not random low-attention genes.
+
+Many are among the most studied genes in biomedical research.
+
+Examples:
+
+| Gene | Biological Role |
+|---|---|
+| `HIF1A` | master regulator of hypoxic response |
+| `NOS3` | endothelial nitric oxide synthase |
+| `IFNG`, `IL1A`, `IL4`, `CXCL8` | major immune cytokines |
+| `MDM2` | canonical p53 regulator |
+| `HLA-DRB1`, `HLA-B` | major histocompatibility complex genes |
+
+Many of these genes have:
+
+```text
+log_pubs ≈ 7–8
+```
+
+which corresponds to roughly:
+
+```text
+1,000–3,000 publications
+```
+
+These genes are well within the top attention range of human genes.
+
+The model predicted high survival probabilities for many of them:
+
+```text
+predicted survival ≈ 0.87–0.95
+```
+
+But they did not survive:
+
+```text
+F1 ∧ F2 ∧ F4
+```
+
+---
+
+## Why Highly Published Genes May Under-Survive
+
+There are two plausible explanations.
+
+### 1. Broad but Diffuse Disease Evidence
+
+Some highly studied genes may be mentioned across many diseases, but without strong, focused evidence for any single disease association.
+
+For example:
+
+```text
+HIF1A may appear in many disease contexts,
+but each disease-specific association may be relatively weak.
+```
+
+Open Targets association scoring rewards focused evidence anchors.
+
+Broadly studied pleiotropic genes may therefore have many publications but still fail to cross the F1 threshold for specific target–disease pairs.
+
+---
+
+### 2. Concentrated Single-Source Literature Evidence
+
+Some highly studied genes may have evidence concentrated mainly in literature or text-mining sources.
+
+For example:
+
+```text
+a cytokine may appear in many cancer, immunology, and metabolism papers,
+but much of that evidence may still count as one broad literature-based source.
+```
+
+This can make the gene fail F2 if the evidence does not appear across multiple distinct Open Targets data sources.
+
+---
+
+# Core H3 Interpretation
+
+The important result is:
+
+```text
+F1 ∧ F2 is not simply filtering for well-studied genes.
+```
+
+Instead, it filters for:
+
+```text
+focused, source-diverse gene–disease evidence
+```
+
+This means highly published genes can still fail if their evidence is:
+
+```text
+broad
+diffuse
+pleiotropic
+not concentrated around specific disease claims
+not supported across multiple source types
+```
+
+A sharper interpretation:
+
+```text
+The filters retain genes whose study has crystallized into specific, multiply sourced gene–disease claims.
+
+Genes whose study remains diffuse, even if they are very highly studied, can be filtered out.
+```
+
+---
+
+# Over-Survivors
+
+The over-survivors show the mirror image pattern.
+
+Examples include:
+
+```text
+OR10R2
+OR51V1
+NKPD1
+RAX2
+LRRC75B
+MBLAC1
+C1orf141
+```
+
+Many of these are:
+
+```text
+olfactory receptors
+open reading frame genes
+low-attention genes
+rare-disease-associated genes
+```
+
+Their publication attention is low:
+
+```text
+log_pubs ≈ 1.6–2.6
+```
+
+which corresponds to fewer than:
+
+```text
+~10 publications
+```
+
+Yet they survive:
+
+```text
+F1 ∧ F2 ∧ F4
+```
+
+---
+
+## Why Low-Attention Genes May Over-Survive
+
+These genes likely survive because they have highly specific curated evidence.
+
+Possible sources include:
+
+```text
+ClinGen
+OMIM
+rare-disease panels
+curated Mendelian disease resources
+```
+
+A gene with very few publications can survive if it has:
+
+```text
+one strong disease-specific curated association
++
+one additional corroborating source
+```
+
+So the model reveals a threshold effect:
+
+```text
+evidence concentration can matter more than evidence volume
+```
+
+In simple terms:
+
+```text
+A gene with a few focused rare-disease papers can survive,
+while a gene with thousands of diffuse biomedical papers may fail.
+```
+
+---
+
+# Combined Story
+
+The combined H3 result is:
+
+```text
+Filtering is not simply attention selection.
+Filtering is evidence-structure selection.
+```
+
+The system favors target–disease pairs where evidence is:
+
+```text
+focused
+source-diverse
+curated
+disease-specific
+```
+
+It can penalize genes whose attention is:
+
+```text
+broad
+diffuse
+pleiotropic
+spread across many disease contexts
+```
+
+This sharpens the chapter’s central argument.
+
+The issue is not only that filtering amplifies attention.
+
+The more precise issue is:
+
+```text
+a structural mismatch between how research attention accumulates
+and how filters operationalize evidence quality
+```
+
+Research attention often accumulates diffusely around hub genes.
+
+But filters operationalize quality as:
+
+```text
+focused multi-source convergence around specific gene–disease claims
+```
+
+---
+
+# Chapter-Ready H3 Result
+
+A possible write-up:
+
+> After controlling for measured research attention, gnomAD constraint, PPI degree, and chromosome, approximately 22% of protein-coding targets under-survive filtering relative to baseline predictions, using residual < -0.3, while approximately 27% over-survive, using residual > +0.3. The under-survivor population is enriched for highly studied pleiotropic genes, including immune cytokines, transcription factors, and master regulators, whose evidence appears broad but lacks focused multi-source disease anchors. The over-survivor population is enriched for low-attention genes with specific curated disease evidence. These results suggest that filters do not simply retain well-studied genes. Instead, they preferentially retain narrowly evidenced target–disease pairs, while broadly relevant biological hubs may be underrepresented in filtered knowledge graphs.
+
+---
+
+# Constraint Bin Pattern
+
+The constraint coefficients show a non-monotonic pattern.
+
+| Constraint Bin | Coefficient | Interpretation |
+|---:|---:|---|
+| 0 | 0.00 | most LOF-intolerant; reference |
+| 1 | 0.09 | slightly higher than reference |
+| 2 | 0.09 | slightly higher than reference |
+| 3 | 0.25 | elevated |
+| 4 | 0.33 | peak |
+| 5 | 0.22 | elevated |
+| 6 | 0.09 | slightly higher than reference |
+| 7 | -0.20 | lower survival |
+| 8 | -0.27 | lower survival |
+| 9 | -0.50 | most LOF-tolerant; lowest survival |
+
+---
+
+## Constraint Interpretation
+
+The relationship between constraint and survival appears to be:
+
+```text
+inverted-U shaped
+```
+
+Moderately constrained genes, especially bins:
+
+```text
+3–5
+```
+
+survive most.
+
+The most loss-of-function-intolerant genes, bin:
+
+```text
+0
+```
+
+are not the most likely to survive after controlling for attention.
+
+They are closer to the baseline.
+
+The most loss-of-function-tolerant genes, bin:
+
+```text
+9
+```
+
+survive least.
+
+---
+
+## Possible Explanation
+
+The lower survival of the most LOF-intolerant genes may reflect the fact that some highly constrained genes are essential.
+
+Essential genes may be:
+
+```text
+embryonic lethal when disrupted
+difficult to perturb experimentally
+less directly tied to disease-specific therapeutic evidence
+harder to study in ordinary disease contexts
+```
+
+The lower survival of highly LOF-tolerant genes is more intuitive:
+
+```text
+genes that tolerate loss of function may be less likely to have strong disease associations
+```
+
+For the chapter, this should be treated as a discussion point rather than a headline result.
+
+---
+
+# Current Status
+
+| Hypothesis / Component | Status | Interpretation |
+|---|---|---|
+| H1 | Supported | Strong attention-associated retention across all three filters |
+| H2 | Supported | Strong non-linear compounding, with F1 × F2 as the dominant interaction |
+| H3 | Supported | Substantial residual structure exists; under-survivors are interpretable as highly studied pleiotropic hubs |
+| F3: LCC | Near-null effect | Open Targets graph is already essentially connected |
+| F4: protein-coding | Strong implicit attention filter | Protein-coding filter also behaves like an attention-associated filter |
+
+---
+
+# Remaining Robustness Checks
+
+## 1. H2 Threshold Robustness
+
+Re-run the factorial at:
+
+```text
+F1 ≥ 0.2
+F1 ≥ 0.8
+```
+
+Goal:
+
+```text
+Confirm that H2 interaction effects persist across the threshold range.
+```
+
+---
+
+## 2. H3 PPI Robustness
+
+Re-run H3 using:
+
+```text
+ppi_degree_curated
+```
+
+instead of:
+
+```text
+ppi_degree_all
+```
+
+Goal:
+
+```text
+Confirm that the under-survivor identity does not depend on STRING-heavy PPI degree.
+```
+
+---
+
+
+# Summary
+
+H3 is supported, but the interpretation is more interesting than the original outline anticipated.
+
+The result is not simply:
+
+```text
+high-attention genes survive
+```
+
+Instead, the result is:
+
+```text
+attention predicts survival, but imperfectly.
+Some highly studied genes under-survive because their evidence is broad and diffuse,
+while some low-attention genes over-survive because their evidence is focused and curated.
+```
+
+The strongest conceptual takeaway is:
+
+```text
+Filtered knowledge graphs may privilege evidence concentration over evidence volume.
+```

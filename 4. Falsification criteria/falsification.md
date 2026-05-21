@@ -1,5 +1,7 @@
 # Falsification Criteria for Determining Whether Hypotheses Hold
 
+This section enumerates several criteria for determining whether our hypotheses hold. 
+
 ## Filter Thresholds
 
 The main analysis uses the following filter settings:
@@ -79,18 +81,16 @@ or if the gap is in the opposite direction.
 
 ## Interpretation If Mixed
 
-If **F3** or **F4** show no attention-associated retention individually, that is still a finding.
-
-In that case, the interpretation becomes:
+In the case that **F3** or **F4** shows no attention-associated retention individually, the interpretation becomes:
 
 ```text
 Evidence-based filters such as F1 and F2 carry attention-associated retention,
 while structural/type filters such as F3 and F4 do not.
 ```
 
-So, H1 should not be treated as fully failed if only F1 and F2 show the effect.
+So, H1 is not treated as fully failed if only F1 and F2 show the effect.
 
-Instead, the claim should be revised to distinguish between:
+Instead, we distinguish between:
 
 - evidence-based filters
 - structural filters
@@ -118,7 +118,12 @@ Non-zero interaction coefficients indicate that the filters are not acting indep
 
 ## Statistical Setup
 
-Use logistic regression on per-gene survival:
+Logistic regression is used because gene survival is a binary outcome: each gene either survives filtering or does not.
+
+The β coefficients estimate how much each filter changes the probability of survival. Negative β values mean the filter reduces survival. Interaction coefficients, such as β₁₂ for F1×F2, test whether two filters together have an effect beyond their individual effects.
+
+For H2, the interaction terms are the key quantities because they show whether stacked filters compound non-linearly rather than acting independently.
+
 
 ```text
 survive_i =
@@ -198,15 +203,15 @@ This would suggest that the filters are nearly redundant or acting mostly indepe
 
 ---
 
-## Pivot If H2 Fails
+## If H2 Fails
 
-If H2 fails, the chapter can pivot to:
+If H2 fails:
 
 ```text
-Filters are largely redundant: a methodological note on apparent multi-filter robustness in published pipelines.
+Filters are largely redundant.
 ```
 
-In that case, the finding would be that stacking filters does not strongly alter the retained gene set beyond what individual filters already do.
+In that case, stacking filters does not strongly alter the retained gene set beyond what individual filters already do.
 
 ---
 
@@ -238,6 +243,19 @@ P(survive_i | F1 ∧ F2 ∧ F3 ∧ F4)
 logit⁻¹(α + γ·log(pubs_i + 1) + δ·structural_covariates_i)
 ```
 
+where:
+
+- survive_i indicates whether gene i survives the full filter stack.
+- F1 ∧ F2 ∧ F3 ∧ F4 means all four filters are applied together.
+- pubs_i is the publication count for gene i.
+- log(pubs_i + 1) is the log-transformed publication count.
+- X_i represents additional gene-level covariates.
+- α is the baseline intercept.
+- γ estimates the association between publication attention and survival.
+- δ estimates the association between covariates and survival.
+- logit⁻¹ converts the linear model output into a probability between 0 and 1.
+
+  
 Structural covariates include:
 
 1. `biotype`
@@ -322,15 +340,15 @@ under-survivor residuals show no structural pattern beyond noise
 
 ## Hard Interpretation Rule
 
-Even if H3 is supported, the interpretation must remain conservative.
+Even if H3 is supported, the interpretation is conservative.
 
-Do **not** claim that under-surviving genes are:
+We do **not** claim that under-surviving genes are:
 
 ```text
 biologically important but unfairly excluded
 ```
 
-The defensible claim is only:
+Our claim is only:
 
 ```text
 These genes survive filtering at rates lower than their measured attention
@@ -345,31 +363,6 @@ For example, this analysis cannot distinguish between:
 - genes being correctly removed because of weak evidence
 - genes being structurally disadvantaged by database coverage
 - genes being peripheral to the filtered graph construction
-
----
-
-# Cross-Cutting Commitments
-
-## No Threshold Tuning After Seeing Results
-
-The main F1 threshold is:
-
-```text
-F1 ≥ 0.5
-```
-
-Robustness thresholds are:
-
-```text
-F1 ≥ 0.2
-F1 ≥ 0.8
-```
-
-Do not retroactively change the main threshold after seeing the results.
-
-For example, if H2 fails at `0.5` but succeeds at `0.3`, do not switch the main analysis to `0.3`.
-
-Instead, report all threshold results and treat inconsistency as part of the finding.
 
 ---
 
@@ -393,15 +386,11 @@ means the individual test threshold is:
 p < 0.00167
 ```
 
-This should be stated in the methods.
+(This should be stated in the methods).
 
 ---
 
 ## Effect Size Reporting
-
-Report all interaction terms regardless of statistical significance.
-
-The main story is about effect magnitude, not only p-values.
 
 ```text
 p-values are screening tools.

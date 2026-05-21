@@ -138,13 +138,62 @@ These filters are used to test whether common graph construction and filtering d
 
 The key hypotheses are:
 
-1. **H1: Filtering bias exists**  
-   Each common filter may preferentially retain high-attention or canonical genes.
+1. **H1: Filters exhibit attention-associated retention**
+   Filters may disproportionately retain genes with higher prior publication attention, even though publication count     is not directly used as a filtering criterion.
 
-2. **H2: Non-linear compounding**  
+   ```
+   Given:
+   F1: evidence strength threshold
+   F2: multi-source support threshold
+   F3: largest connected component
+   F4: protein-coding / genetics-only constraint
+
+   Question:
+   Do these filters indirectly retain the highly published genes?
+   ```
+
+2. **H2: Filters exhibit non-linear compounding**  
    Stacked filters may retain a narrower gene set than expected from the individual filters alone.
 
+   ```
+   #### Example
+
+   Suppose the unfiltered graph contains 10,000 genes.
+
+   Applied separately:
+
+   | Filter | Genes Retained | Percent Retained |
+   |---|---:|---:|
+   | No filter | 10,000 | 100% |
+   | F1: score ≥ 0.5 | 6,000 | 60% |
+   | F2: ≥ 2 sources | 5,500 | 55% |
+   | F3: largest connected component | 7,000 | 70% |
+
+   Each filter appears moderately selective.
+
+   If the filters acted independently, the expected retention after stacking them would be approximately:
+
+   Expected retention: 23.1%
+   Observed retention: 9%
+   
+   If OR < ER: The stacked filters are not just reducing the graph size. They are producing a survivor set that is        much smaller and much more publication-enriched than expected.
+   ```
+   
 3. **H3: Structural counterfactual**  
    Some genes may under-survive relative to what would be expected from research attention alone.
+
+### Logic
+**H1:** Highly published genes are generally more likely to survive filtering.
+**H2:** When filters are stacked, survival filtering favors the most highly published genes.
+**H3:**
+If H3 is supported:
+    Publication attention is not enough.
+    Some highly published genes still fail because of the evidence structure,
+    source coverage, graph position, or type constraints.
+
+If H3 is not supported:
+    Publication attention explains most of survival.
+    In other words, once you know how well studied a gene is,
+    there is little extra under-survival left to explain.
 
 The main expectation is that the non-linearity hypothesis should hold across the permissive, default, and stringent filter settings.

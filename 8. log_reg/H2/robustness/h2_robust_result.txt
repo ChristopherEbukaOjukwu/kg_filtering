@@ -1,0 +1,16 @@
+
+=== Robustness across settings ===
+
+              label  n_empty_cells  n_f1f2f4  indep_pred  fold_over_indep
+Permissive (F1≥0.2)              0     78231       18646         4.195663
+Default    (F1≥0.5)              0     20105        1547        12.999607
+Stringent  (F1≥0.8)              3      1470          57        25.755451
+  Stringent F2 (≥3)              0     11099         197        56.323411
+
+=== H2 interaction effects (log-scale β and fold exp(β)) ===
+
+              label  beta_f1xf2    exp_f1xf2  beta_f1xf4  exp_f1xf4  beta_f2xf4  exp_f2xf4
+Permissive (F1≥0.2)    2.000485     7.392641    3.667584  39.157205    1.188325   3.281579
+Default    (F1≥0.5)    3.299914    27.110296    1.794674   6.017512    1.552691   4.724167
+Stringent  (F1≥0.8)   10.463955 35029.818086    2.077720   7.986238    1.639084   5.150447
+  Stringent F2 (≥3)    4.966304   143.495503    1.985088   7.279688    2.364969  10.643713

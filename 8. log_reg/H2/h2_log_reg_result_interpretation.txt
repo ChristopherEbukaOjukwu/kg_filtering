@@ -1,53 +1,269 @@
-This is the H2 result. Decisive in every direction.
+# H2 Regression Results
 
-## What the regression shows
+This is the H2 result.
 
-**Three large 2-way interactions, all positive, all significant.**
+The result is decisive in every direction.
 
-| Interaction | β | exp(β) | What it means |
-|---|---|---|---|
-| F1 × F2 | 3.30 | **27.1×** | Pairs passing F1 are 27× more likely to also pass F2 than independence predicts |
-| F1 × F4 | 1.80 | **6.0×** | F1-passers are 6× more likely to be protein-coding than baseline |
-| F2 × F4 | 1.55 | **4.7×** | F2-passers are 4.7× more likely to be protein-coding than baseline |
+---
 
-For your preregistered criterion (|β| ≥ 0.3 for at least 2 pairwise terms), you have **all three terms with β ≥ 1.5** — five times your threshold. H2 is supported with effect sizes that aren't even close to ambiguous.
+## What the Regression Shows
 
-**The likelihood-ratio test from main-effects to 2-way: LR = 83,609 on 3 degrees of freedom.** Under independence this statistic should be roughly 3 (its expected value if all interactions were zero). The observed value is ~30,000× larger than expected. Statistical significance is meaningless here — the question is effect magnitude, and the answer is "enormous."
+The regression shows three large two-way interactions.
 
-**The 3-way interaction is small but real.** β = -0.73, exp(β) = 0.48, p = 0.001. This negative coefficient is interesting: it says the F1×F2 super-multiplicativity *attenuates* slightly when restricted to protein-coding genes. Mechanistically, this makes sense — among non-coding genes, F1 and F2 are even *more* correlated than among protein-coding (because the rare non-coding gene that passes F1 has typically done so via a strong single curated source rather than via cross-source aggregation). For the chapter, this is one sentence in the methods, not a main finding.
+All three are:
 
-## How to interpret this for the chapter
+```text
+positive
+large
+statistically significant
+```
 
-**The F1 × F2 interaction is the headline.** Stacking F1 and F2 produces 27× more co-survivors than chance would predict. That isn't redundancy (which would give 100% overlap), it isn't independence (which would give 1× co-occurrence), it's strong positive non-linear compounding — exactly what H2 predicted.
+---
 
-In mechanism: F1 (strong overall score) and F2 (multi-source) both reward harmonic-sum-elevating evidence properties. They aren't measuring the same thing — F1 captures "has a strong anchor," F2 captures "has cross-source corroboration" — but they're partially driven by the same underlying property: well-studied gene-disease pairs accumulate both strong evidence and multiple sources, while weakly-attested pairs accumulate neither. The filters therefore concentrate together on a small population.
+## Two-Way Interaction Results
 
-**The F1 × F4 interaction quantifies the protein-coding implicit selection.** β = 1.80 means F1-passers are over-represented among protein-coding genes by a factor of 6 vs. baseline. In your factorial: 99.7% of F1-survivors are protein-coding vs. 97.4% baseline. This is the "F4 is redundant after F1" effect in regression form.
+| Interaction | β | exp(β) | Interpretation |
+|---|---:|---:|---|
+| F1 × F2 | 3.30 | 27.1× | Pairs passing F1 are 27× more likely to also pass F2 than independence predicts |
+| F1 × F4 | 1.80 | 6.0× | F1-passers are 6× more likely to be protein-coding than baseline |
+| F2 × F4 | 1.55 | 4.7× | F2-passers are 4.7× more likely to be protein-coding than baseline |
 
-## The right way to frame H2 in the chapter
+---
 
-You can now make a precise quantitative claim:
+## H2 Decision Rule
 
-> *Under default Open Targets filter specifications (F1: overall score ≥ 0.5; F2: ≥ 2 data sources; F4: protein-coding only), pairwise filter interactions on the log-frequency scale exceed β = 1.5 in magnitude for all three filter pairs (F1×F2: β = 3.30; F1×F4: β = 1.80; F2×F4: β = 1.55; all p < 10⁻¹⁵). The fully-stacked filter cell contains 27× more pairs than independent filter action would predict, indicating substantial non-linear compounding rather than additive composition.*
+The preregistered H2 criterion was:
 
-That sentence is the H2 result. It's defensible, preregistered, quantitative, and effect-size-grounded rather than p-value-grounded.
+```text
+|β| ≥ 0.3 for at least 2 pairwise interaction terms
+```
 
-## A note on F3
+The observed result is much stronger than this threshold.
 
-You'll notice F3 isn't in this regression. That's because — as the factorial showed — F3 alone removes 1 pair from the unfiltered graph. There's no variance in F3's per-pair indicator at this scale. To include it would add noise without information.
+All three pairwise interaction terms have:
 
-For the chapter, F3 gets its own short subsection: a methodological note that the unfiltered Open Targets graph is essentially a single connected component, so the "largest connected component" filter common in network analysis literature has effectively null effect on this dataset. That's a finding, not a failure. It tells you something about the structure of Open Targets — every gene-disease pair is reachable from every other through the aggregated evidence network. Worth a paragraph.
+```text
+β ≥ 1.5
+```
 
-## What's next
+This is at least five times larger than the preregistered threshold.
 
-H2 is done. The story is solid: filters compound super-multiplicatively, with F1×F2 the dominant interaction.
+Therefore:
 
-Three things remain before chapter 3 has its full result set:
+```text
+H2 is strongly supported.
+```
 
-1. **H1 quantification.** You already have the factorial showing monotone increase in mean attention. Run a quick Mann-Whitney test comparing survivor vs. dropped attention distributions for each filter individually. This gives you the per-filter H1 effect sizes to report alongside the H2 interactions. Takes ten minutes.
+The effect sizes are not close to ambiguous.
 
-2. **H3 baseline regression.** Predict per-target survival in the fully-stacked cell from `log(n_publications + 1)` + biotype + constraint_bin + ppi_degree. Compute residuals. Identify under-survivors. This is the big remaining piece, maybe an hour or two of analysis.
+---
 
-3. **Robustness checks.** Re-run the factorial at F1 = 0.2 and F1 = 0.8 to confirm the H2 interaction effects are not threshold-dependent. Re-run with the curated-only PPI degree for H3 robustness. Each takes ten minutes once the main code is in place.
+# Likelihood-Ratio Test
 
-Want to head to H3, or run H1 quantification first to round out the picture?
+The likelihood-ratio test comparing the main-effects model to the two-way interaction model gives:
+
+```text
+LR = 83,609
+df = 3
+```
+
+Under independence, this statistic would be expected to be approximately:
+
+```text
+3
+```
+
+The observed statistic is therefore roughly:
+
+```text
+~30,000× larger than expected
+```
+
+At this scale, statistical significance is not the main issue. The important point is the effect magnitude, which is enormous.
+
+---
+
+# Three-Way Interaction
+
+The three-way interaction is small but real.
+
+```text
+β = -0.73
+exp(β) = 0.48
+p = 0.001
+```
+
+The negative coefficient means that the F1 × F2 super-multiplicative relationship is slightly attenuated when restricted to protein-coding genes.
+
+In simpler terms:
+
+```text
+F1 and F2 are strongly correlated, but that correlation is somewhat weaker within protein-coding genes than in the full graph.
+```
+
+Mechanistically, this makes sense.
+
+Among non-coding genes, the rare target–disease pair that passes F1 may be more exceptional. It may pass because of a strong curated source rather than broad cross-source aggregation.
+
+(For the chapter, this will be treated as a secondary detail, not a main finding).
+
+---
+
+# Interpretation for the Chapter
+
+## Main H2 Finding
+
+The F1 × F2 interaction is the headline result.
+
+Stacking F1 and F2 produces:
+
+```text
+27× more co-survivors than independence would predict
+```
+
+This is not simple redundancy. It is also not independence.
+
+Instead, it is strong positive non-linear compounding.
+
+That is exactly what H2 predicted.
+
+---
+
+## Mechanistic Interpretation
+
+F1 and F2 reward related but non-identical evidence properties.
+
+F1 captures:
+
+```text
+strong overall association score
+```
+
+F2 captures:
+
+```text
+cross-source support
+```
+
+They are not measuring the exact same thing.
+
+However, both are partially driven by the same underlying structure:
+
+```text
+well-supported gene–disease pairs tend to accumulate both stronger evidence and more evidence sources.
+```
+
+As a result, F1 and F2 concentrate together on a smaller population of highly supported target–disease pairs.
+
+In simple terms:
+
+```text
+F1 asks whether the association is strong.
+F2 asks whether the association is supported by multiple sources.
+The pairs that satisfy both are much more common than independence would predict.
+```
+
+---
+
+# F1 × F4: Protein-Coding Implicit Selection
+
+The F1 × F4 interaction quantifies implicit protein-coding selection.
+
+```text
+β = 1.80
+exp(β) = 6.0
+```
+
+This means F1-passers are overrepresented among protein-coding genes by a factor of:
+
+```text
+6×
+```
+
+relative to baseline.
+
+This matches the factorial result:
+
+| Condition | Percent Protein-Coding |
+|---|---:|
+| Baseline | 97.4% |
+| F1 survivors | 99.7% |
+
+The interpretation is:
+
+```text
+F1 already implicitly selects for protein-coding targets.
+```
+
+Therefore, when F4 is applied after F1, F4 has very little additional work left to do.
+
+---
+
+# A precise chapter-ready version:
+
+> Under default Open Targets filter specifications (F1: overall score ≥ 0.5; F2: ≥ 2 data sources; F4: protein-coding only), pairwise filter interactions on the log-frequency scale exceed β = 1.5 in magnitude for all three filter pairs: F1 × F2, β = 3.30; F1 × F4, β = 1.80; F2 × F4, β = 1.55; all p < 10⁻¹⁵. The fully stacked filter cell contains 27× more pairs than independent filter action would predict, indicating substantial non-linear compounding rather than additive composition.
+
+This sentence is:
+
+```text
+defensible
+preregistered
+quantitative
+effect-size-grounded
+```
+
+It does not rely only on p-values.
+
+---
+
+# Note on F3
+
+F3 is not included in this regression.
+
+The reason is that the factorial showed F3 has almost no effect on the unfiltered graph.
+
+F3 alone removes only:
+
+```text
+1 pair
+```
+
+from the unfiltered graph.
+
+Because of this, there is almost no useful variance in the F3 per-pair indicator at this scale.
+
+Including it in the regression would add noise without adding information.
+
+---
+
+## F3 in the Chapter
+
+The key point is:
+
+```text
+The unfiltered Open Targets graph is essentially a single connected component.
+```
+
+Therefore, the largest connected component filter, which is common in network analysis, has almost no effect on this dataset.
+
+This is not a failure.
+
+It is a structural finding about Open Targets.
+
+It means:
+
+```text
+Almost every target–disease pair is already reachable from every other through the aggregated evidence network.
+```
+
+---
+
+# Summary of H2 Findings
+
+| Finding | Interpretation |
+|---|---|
+| F1 × F2 is very large | Strong evidence and multi-source support co-occur far more than expected under independence |
+| F1 × F4 is large | High-score associations are already overwhelmingly protein-coding |
+| F2 × F4 is large | Multi-source associations are also enriched for protein-coding targets |
+| F3 has near-null effect | The Open Targets graph is already essentially connected |
+| H2 is supported | Filters compound non-linearly rather than acting independently |

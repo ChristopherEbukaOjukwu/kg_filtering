@@ -3,66 +3,149 @@
 NCBI publishes `gene2pubmed` as a single flat file with one row per `(gene, paper)` pair. This file is aggregated into per-gene publication counts. The Ensembl mapping is already available through the Open Targets Target file via `dbXrefs`, so no extra mapping table is needed beyond mapping NCBI Gene IDs to Ensembl IDs.
 
 ---
+## NCBI Gene IDs Are Mapped to Ensembl IDs
+
+The `gene2pubmed` file uses **NCBI Gene IDs** to link genes to PubMed articles. However, Open Targets primarily uses **Ensembl gene IDs** for targets. Because the identifiers are different, the publication counts from `gene2pubmed` cannot be joined directly to the Open Targets association files.
+
+The workflow is therefore:
+
+1. Use `gene2pubmed` to count publications per NCBI Gene ID.
+2. Use `gene2ensembl` to map NCBI Gene IDs to Ensembl gene IDs.
+3. Join the mapped publication counts to the Open Targets Target file using Ensembl ID.
+4. Use the resulting table as `gene_attention.parquet`.
 
 ## Overall Workflow
 
 ```text
-gene2pubmed
-    ↓
-pub_counts
-NCBI Gene ID → n_publications
-    ↓
+gene2pubmed     →  pub_counts (NCBI Gene ID → n_publications)
+↓
 JOIN on NCBI Gene ID
-    ↓
-gene2ensembl
-NCBI Gene ID ↔ Ensembl ID
-    ↓
+↓
+gene2ensembl    →  ensembl_to_ncbi (NCBI Gene ID ↔ Ensembl ID)
+↓
 JOIN on Ensembl ID
-    ↓
-OT Target file
-    ↓
-final gene_attention table
-Ensembl ID → n_publications
+↓
+OT Target file  →  final gene_attention table (Ensembl ID → n_publications)
 ```
 
-## Step 1 Download.
-The file used was gotten from https://ftp.ncbi.nlm.nih.gov/gene/DATA/:
-gene2pubmed.gz (last modified date and time: 2026-05-20 05:08;  size: 253M)
+## Step 1: Download `gene2pubmed`
 
+The file was downloaded from: https://ftp.ncbi.nlm.nih.gov/gene/DATA/.
+
+File used:
+
+```text
+gene2pubmed.gz
+```
+
+| Field | Value |
+|---|---|
+| Last modified | 2026-05-20 05:08 |
+| Compressed size | 253M |
+| Uncompressed size | 1.8G |
+
+Download command:
+
+```bash
 wget https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz
 gunzip -k gene2pubmed.gz   # -k keeps the .gz too
+```
 
 The file is 253M zipped and 1.8G unzipped.
 
-File Format: Three tab-separated columns: #tax_id, GeneID (NCBI Gene ID), PubMed_ID.
+The file format is a three tab-separated columns:
+
+| Column | Meaning |
+|---|---|
+| `#tax_id` | NCBI taxonomy ID |
+| `GeneID` | NCBI Gene ID |
+| `PubMed_ID` | PubMed publication ID |
+
+Example rows:
+
+```text
 #tax_id GeneID  PubMed_ID
 23      310495631       15925900
 23      310495633       7751290
-23      310495633       9182530
-23      310495633       10799476
+```
+---
 
+## Step 2: Aggregate to Per-Gene Publication Counts
 
-## Step 2 Aggregate to per-gene counts.
-source file: aggregated_per_gene_count.py
+The raw `gene2pubmed` file was aggregated into publication counts per NCBI Gene ID.
 
-## step 3 get gene2ensembl
-The file used was gotten from https://ftp.ncbi.nlm.nih.gov/gene/DATA/:
-gene2ensembl.gz (last modified: 2026-05-20 05:05  size: 276M)
+Source script:
+```text
+aggregated_per_gene_count.py
+```
 
+Output concept:
+```text
+NCBI Gene ID → n_publications
+```
+
+---
+
+## Step 3: Download `gene2ensembl`
+
+The file was downloaded from: <https://ftp.ncbi.nlm.nih.gov/gene/DATA/>
+
+File used:
+
+```text
+gene2ensembl.gz
+```
+
+Metadata at download time:
+
+| Field | Value |
+|---|---|
+| Last modified | 2026-05-20 05:05 |
+| Compressed size | 276M |
+
+Download command:
+
+```bash
 wget https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2ensembl.gz
 gunzip -k gene2ensembl.gz
+```
 
-We only need: tax_id, GeneID (NCBI), and Ensembl_gene_identifier.
+Only the following columns were needed:
 
-for mapping (NCBI Gene ID ↔ Ensembl ID) and JOIN on Ensembl ID for final gene_attention table: map_to_ensenbl.py saved to: gene_attention.parquet
+| Column | Meaning |
+|---|---|
+| `tax_id` | NCBI taxonomy ID |
+| `GeneID` | NCBI Gene ID |
+| `Ensembl_gene_identifier` | Ensembl gene ID |
 
-┌────────────┬────────────────┬─────────────┐
-│ total_rows │ unique_ensembl │ unique_ncbi │
-│   int64    │     int64      │    int64    │
-├────────────┼────────────────┼─────────────┤
-│      38548 │          38267 │       38516 │
-└────────────┴────────────────┴─────────────┘
+This file was used to map:
 
+```text
+NCBI Gene ID ↔ Ensembl ID
+```
+Then the mapped table was joined on Ensembl ID to produce the final gene attention table.
+
+Mapping script:
+
+```text
+map_to_ensenbl.py
+```
+Output file:
+
+```text
+gene_attention.parquet
+```
+---
+
+## Mapping Summary
+
+After mapping NCBI Gene IDs to Ensembl IDs:
+
+| total_rows | unique_ensembl | unique_ncbi |
+|---:|---:|---:|
+| 38,548 | 38,267 | 38,516 |
+
+### Mapping Coverage by Biotype
 ┌────────────────────────────────────┬─────────┬──────────┬────────────┐
 │              biotype               │ n_total │ n_mapped │ pct_mapped │
 │              varchar               │  int64  │  int128  │   double   │
@@ -91,8 +174,16 @@ for mapping (NCBI Gene ID ↔ Ensembl ID) and JOIN on Ensembl ID for final gene_
 │ Mt_rRNA                            │       2 │        2 │      100.0 │
 │ IG_pseudogene                      │       1 │        0 │        0.0 │
 └────────────────────────────────────┴─────────┴──────────┴────────────┘
-  37 rows (20 shown)                                         4 columns
 
+ Full table:
+
+```text
+37 rows total; 20 shown above.
+```
+
+---
+
+### Most Published Genes in `gene_attention.parquet`
 ┌────────────────┬────────────────┬────────────────┐
 │ approvedSymbol │    biotype     │ n_publications │
 │    varchar     │    varchar     │     int64      │
@@ -113,7 +204,8 @@ for mapping (NCBI Gene ID ↔ Ensembl ID) and JOIN on Ensembl ID for final gene_
 │ BRCA1          │ protein_coding │           3449 │
 │ NFKB1          │ protein_coding │           3396 │
 └────────────────┴────────────────┴────────────────┘
-  15 rows                                3 columns
+
+### Publication Count Summary
 
 ┌───────┬───────────┬──────────────────┬─────────────┬──────────┐
 │ total │ zero_pubs │    mean_pubs     │ median_pubs │ max_pubs │
@@ -124,18 +216,78 @@ for mapping (NCBI Gene ID ↔ Ensembl ID) and JOIN on Ensembl ID for final gene_
 
 
 
-At the end of this step:
-OT associations (overall, by-datatype, by-datasource)
-OT target metadata (biotype, constraint, structural features)
-External attention (gene2pubmed via gene2ensembl mapping)
+## Data Available After This Step
 
-NOTE:
-What gene_attention.parquet contains:
-38,548 rows. Each row is one Ensembl ID that succeeded in the gene2ensembl mapping. Those 38,548 IDs are all targets in OT's vocabulary, but they are not all the targets in OT.
+At the end of this step, the working data includes:
+
+1. Open Targets association files:
+   - `association_overall_direct`
+   - `association_by_datatype_direct`
+   - `association_by_datasource_direct`
+2. Open Targets target metadata:
+   - biotype
+   - constraint
+   - structural features
+   - approved gene symbol
+   - other target annotations
+3. External gene attention data:
+   - publication counts from `gene2pubmed`
+   - mapped to Ensembl IDs using `gene2ensembl`
+  
+---
+
+## Note on `gene_attention.parquet`
+
+The `gene_attention.parquet` file contains:
+
+```text
+38,548 rows
+```
+Each row corresponds to one Ensembl ID that successfully mapped through `gene2ensembl`. These 38,548 Ensembl IDs are all targets in the Open Targets vocabulary, but they are not all Open Targets targets.
+
 The OT Target file has ~78,691 targets. The gene_attention.parquet has 38,548. The missing ~40,000 are the targets that didn't map to NCBI Gene IDs — mostly lncRNAs (28,000 unmapped), pseudogenes (~9,000 unmapped), and a handful of others.
 
 
-## Deduplicate gene_attention.parquet
-When running canonical_table.py, we found that attn_rows = 38,548 and attn_unique = 38,267 showing that the attention file has 281 duplicate ensembl_id rows. Each duplicate creates a fanout on the LEFT JOIN, multiplying every association of that gene.
-A few hundred genes map to multiple NCBI Gene IDs in gene2ensembl (alternative loci, X/Y pseudoautosomal copies, etc.), and gene_attention.parquet kept one row per (ensembl_id, ncbi_gene_id) pair instead of collapsing.
-To fix this, we deduplicate the attention table by summing publications across NCBI IDs that map to the same Ensembl gene. That way, we're not just dropping data, we're aggregating it correctly.
+### The following issue was found:
+
+| Metric | Value |
+|---|---:|
+| `attn_rows` | 38,548 |
+| `attn_unique` | 38,267 |
+| duplicate Ensembl ID rows | 281 |
+
+This means the attention file contained 281 duplicate `ensembl_id` rows.
+
+---
+
+### Why Duplicates Occur
+
+A few hundred genes map to multiple NCBI Gene IDs in `gene2ensembl`.
+
+This can happen because of:
+- alternative loci
+- X/Y pseudoautosomal copies
+- other complex gene mapping cases
+
+The initial `gene_attention.parquet` kept one row per:
+```text
+(ensembl_id, ncbi_gene_id)
+```
+
+instead of collapsing to one row per Ensembl gene.
+
+---
+
+### Deduplication Fix
+
+To fix this, the attention table should be deduplicated by summing publication counts across NCBI Gene IDs that map to the same Ensembl gene.
+
+This keeps the data rather than dropping duplicate mappings.
+
+Correct aggregation logic:
+
+```text
+ensembl_id → sum(n_publications across mapped NCBI Gene IDs)
+```
+
+After this fix, each Ensembl gene appeared only once in the attention table. This prevents duplicated gene rows from multiplying gene–disease associations during joins.

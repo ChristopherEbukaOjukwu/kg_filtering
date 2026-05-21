@@ -1,53 +1,305 @@
-Strong robustness result, with one finding that actually tightens the chapter's H3 story.
+# H3 PPI Robustness Check
 
-## What the robustness check shows
+This is a strong robustness result, with one finding that tightens the H3 story.
 
-**Overall: the H3 result is robust to PPI source choice.**
+---
 
+## What the Robustness Check Shows
+
+Overall, the H3 result is robust to PPI source choice.
+
+| Metric | PPI = All / STRING-Inclusive | PPI = Curated |
+|---|---:|---:|
+| AUC | 0.7714 | 0.7736 |
+| Log-likelihood | -9,142.6 | -9,121.0 |
+| Residual correlation | — | 0.997 |
+| Top-100 under-survivor overlap | — | 83% |
+
+The two models give nearly identical predictions.
+
+Key robustness signals:
+
+```text
+Residual correlation = 0.997
+AUC difference ≈ 0.002
+Top-100 under-survivor overlap = 83%
 ```
-                       PPI=all (STRING)   PPI=curated
-AUC                              0.7714        0.7736
-Log-likelihood                  -9,142.6      -9,121.0
-Residual correlation                            0.997
-Top-100 overlap                                   83%
+
+This means the under-survivor population is highly stable across PPI source choices.
+
+The visible differences in the top-20 lists are mostly reorderings of the same broad gene class rather than substitutions of one biological population for another.
+
+---
+
+# Top Under-Survivor Pattern
+
+Both top-20 lists tell the same story.
+
+Genes appearing in both models include:
+
+```text
+HIF1A
+NOS3
+IFNG
+ABCB1
+MDM2
+ADIPOQ
+IL4
+IL1A
+MAPK14
+CXCL8
+BIRC5
+GSTP1
+HMGB1
+HLA-DRB1
+TLR2
+ANXA2
 ```
 
-The two models give nearly identical predictions: residual correlation of 0.997, AUC within 0.002. The under-survivor population is the same 83% of the time, and the visible differences in the top-20 are reordering of the same gene set rather than substitution of one population for another.
+These are mostly:
 
-**Both top-20 lists tell the same story.** HIF1A, NOS3, IFNG, ABCB1, MDM2, ADIPOQ, IL4, IL1A, MAPK14, CXCL8, BIRC5, GSTP1, HMGB1, HLA-DRB1, TLR2, ANXA2 appear in both — these are master regulators, cytokines, MHC molecules, and chemoprotection enzymes. The curated version surfaces CYP2C19, CYP2E1, CXCL10, and AGER in the top 20 (drug-metabolism cytochromes and additional inflammation/aging markers), while the STRING version had PKM, LGALS3, MKI67, and HLA-B. Same family of "well-studied pleiotropic hub" genes. **The H3 finding is not a STRING artifact.**
-
-## The unexpected wrinkle — and what it tells you
-
-Notice the sign flip on the PPI coefficient:
-
-```
-β_log_ppi_all      = +0.145    p = 2.6 × 10⁻⁶
-β_log_ppi_curated  = −0.140    p = 6.2 × 10⁻¹⁶
+```text
+master regulators
+cytokines
+MHC molecules
+chemoprotection enzymes
+signaling intermediates
+pleiotropic biological hubs
 ```
 
-In the STRING-inflated model, higher PPI degree predicts *higher* survival. In the curated model, higher PPI degree predicts *lower* survival.
+The curated-PPI version additionally surfaces:
 
-This is interesting and worth understanding. It's not contradictory — the two networks measure different things:
+```text
+CYP2C19
+CYP2E1
+CXCL10
+AGER
+```
 
-- **STRING degree** reflects total interactor richness, including text-mined and predicted edges. It correlates strongly with attention (well-studied genes have more characterized partners *and* more inferred partners). So when you put STRING degree in the model alongside attention, it acts as a redundant attention proxy and picks up positive predictive weight.
-- **Curated PPI degree** (IntAct/Signor/Reactome only) reflects experimentally-verified physical interactors. It captures "this gene is a structural hub in the cell" rather than "this gene has been studied a lot." After log_pubs controls for attention, what's left in curated PPI is structural hub-ness, which turns out to be *negatively* predictive of filter survival.
+These are drug-metabolism cytochromes and additional inflammation/aging-related markers.
 
-This actually sharpens H3 in a useful way. The interpretation:
+The STRING-inclusive version includes:
 
-> *Highly-connected hub proteins (curated PPI degree) are less likely to survive evidence-quality filters than their attention levels predict, because their broad participation in cellular processes manifests as diffuse evidence across many diseases rather than focused, multiply-corroborated single-disease anchors.*
+```text
+PKM
+LGALS3
+MKI67
+HLA-B
+```
 
-The under-survivor list — HIF1A, MDM2, IFNG, cytokines, MAPK14 — *are* the structural hubs of the cell. Their biological role is connection, regulation, and pleiotropy. And that's exactly the property that gets penalized by filters that reward focused gene-disease evidence.
+The specific ranking changes slightly, but the interpretation does not.
 
-The β = -0.14 on curated PPI is a stronger version of the H3 story than the original: **filters don't just retain "well-studied" genes — they specifically select against structurally hub-like genes whose study has spread across many disease contexts.**
+The under-survivors remain well-studied pleiotropic hub genes.
 
-## How to write this up
+Therefore:
 
-This is the cleanest finding of the chapter, methodologically. Here's the robustness paragraph:
+```text
+The H3 finding is not a STRING artifact.
+```
 
-> *To assess whether the H3 finding depended on the choice of PPI source, we refit the structural baseline using IntAct/Signor/Reactome curated interactions only (excluding STRING's predicted and text-mined edges). The two models gave near-identical predictions (residual correlation r = 0.997; top-100 under-survivor overlap = 83%; AUC = 0.7714 vs. 0.7736). The under-survivor population was structurally identical across PPI sources, dominated in both cases by master regulators (HIF1A, MDM2), cytokines (IFNG, IL1A, IL4, CXCL8), MHC molecules (HLA-DRB1), and signaling intermediates (MAPK14). The PPI degree coefficient changed sign between sources (β_STRING = +0.14, β_curated = −0.14, both p < 10⁻⁵), reflecting that STRING degree partially proxies research attention while curated PPI degree measures structural hub-ness. After accounting for attention via log(publications), curated PPI degree is negatively associated with filter survival — that is, structurally hub-like genes are systematically under-retained relative to attention-baseline expectations.*
+---
 
-## Where you stand now
+# Unexpected Wrinkle: PPI Coefficient Sign Flip
 
-H1 ✓ — supported, large effects
-H2 ✓ — supported, robust across F1 thresholds (4× to 56× over independence)
-H3 ✓ — supported, robust across PPI sources, with the curated version revealing a sharper structural interpretation
+One interesting result is the sign flip on the PPI coefficient.
+
+| PPI Variable | β | p-value |
+|---|---:|---:|
+| `log_ppi_all` | +0.145 | 2.6 × 10⁻⁶ |
+| `log_ppi_curated` | -0.140 | 6.2 × 10⁻¹⁶ |
+
+In the STRING-inclusive model, higher PPI degree predicts higher survival.
+
+In the curated-PPI model, higher PPI degree predicts lower survival.
+
+This is not contradictory.
+
+The two PPI networks measure different things.
+
+---
+
+## Interpretation of STRING-Inclusive PPI Degree
+
+STRING degree reflects broad interactor richness, including:
+
+```text
+text-mined interactions
+predicted interactions
+known interactions
+database-derived interactions
+```
+
+Because STRING includes text-mined and predicted edges, its degree is strongly correlated with research attention.
+
+Well-studied genes tend to have more characterized partners, more inferred partners, and more text-mined associations.
+
+Therefore, in the STRING-inclusive model:
+
+```text
+PPI degree partly behaves like another attention proxy.
+```
+
+This explains the positive coefficient.
+
+---
+
+## Interpretation of Curated PPI Degree
+
+Curated PPI degree, restricted to sources such as:
+
+```text
+IntAct
+SIGNOR
+Reactome
+```
+
+reflects experimentally supported or curated molecular interactions.
+
+This is closer to:
+
+```text
+structural hub-ness
+```
+
+rather than broad research visibility.
+
+After controlling for publication attention using:
+
+```text
+log(n_publications + 1)
+```
+
+the remaining curated PPI signal appears to capture whether a gene is a biological interaction hub.
+
+The negative coefficient suggests:
+
+```text
+structurally hub-like genes are less likely to survive the evidence-quality filters than their publication attention would predict.
+```
+
+---
+
+# How This Sharpens H3
+
+The curated-PPI result strengthens the H3 interpretation.
+
+The key idea is:
+
+```text
+Highly connected hub proteins are less likely to survive evidence-quality filters than their attention levels predict.
+```
+
+A likely reason is that hub genes participate broadly across many biological processes and disease contexts.
+
+Their evidence may be:
+
+```text
+broad
+diffuse
+pleiotropic
+spread across many diseases
+not concentrated into specific multi-source disease anchors
+```
+
+But the filters reward:
+
+```text
+focused
+source-diverse
+disease-specific
+corroborated target–disease evidence
+```
+
+So H3 becomes more precise.
+
+The result is not simply:
+
+```text
+filters retain well-studied genes
+```
+
+Instead:
+
+```text
+filters retain genes whose evidence is focused and disease-specific,
+while structurally hub-like genes may under-survive because their evidence is diffuse.
+```
+
+---
+
+# Stronger H3 Interpretation
+
+The under-survivor list includes genes such as:
+
+```text
+HIF1A
+MDM2
+IFNG
+IL1A
+IL4
+CXCL8
+MAPK14
+```
+
+These are biological hubs.
+
+Their roles are often based on:
+
+```text
+connection
+regulation
+signaling
+immune response
+pleiotropy
+cross-disease relevance
+```
+
+That is exactly the kind of evidence structure that may be penalized by filters requiring focused gene–disease support.
+
+A concise interpretation:
+
+```text
+Filters do not simply retain well-studied genes.
+They select against some structurally hub-like genes whose research attention is spread across many disease contexts.
+```
+
+---
+
+# Chapter Write-Up Version
+
+A possible robustness paragraph:
+
+> To assess whether the H3 finding depended on the choice of PPI source, we refit the structural baseline using curated interactions only from IntAct, SIGNOR, and Reactome, excluding STRING’s predicted and text-mined edges. The two models gave near-identical predictions, with residual correlation r = 0.997, top-100 under-survivor overlap of 83%, and AUC values of 0.7714 versus 0.7736. The under-survivor population was structurally similar across PPI sources, dominated in both cases by master regulators such as HIF1A and MDM2, cytokines such as IFNG, IL1A, IL4, and CXCL8, MHC molecules such as HLA-DRB1, and signaling intermediates such as MAPK14. The PPI degree coefficient changed sign between sources, with β_STRING = +0.14 and β_curated = -0.14, both p < 10⁻⁵. This suggests that STRING degree partially proxies research attention, while curated PPI degree captures structural hub-ness. After accounting for attention using log(publications), curated PPI degree is negatively associated with filter survival, indicating that structurally hub-like genes are under-retained relative to attention-baseline expectations.
+
+---
+
+# Current Status
+
+| Hypothesis / Component | Status | Interpretation |
+|---|---|---|
+| H1 | Supported | Large attention-associated retention effects across filters |
+| H2 | Supported | Strong non-linear compounding, robust across F1 thresholds |
+| H3 | Supported | Substantial residual structure remains after accounting for attention |
+| H3 PPI robustness | Supported | Under-survivor pattern is stable across PPI source choices |
+| Curated PPI result | Informative | Structural hub-ness is negatively associated with survival after attention control |
+
+---
+
+# Summary
+
+The H3 result is robust to PPI source choice.
+
+The main under-survivor pattern does not depend on STRING.
+
+Using curated PPI sharpens the interpretation:
+
+```text
+Publication attention predicts survival, but imperfectly.
+Some highly studied, structurally hub-like genes under-survive because their evidence is broad and diffuse rather than focused and source-diverse.
+```
+
+The strongest conceptual takeaway is:
+
+```text
+Filtered gene–disease knowledge graphs may privilege evidence concentration over biological connectedness.
+```

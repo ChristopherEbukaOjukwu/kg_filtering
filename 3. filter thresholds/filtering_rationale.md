@@ -1,31 +1,145 @@
-# Here is some reasoning behind the filtering decisions
+# Rationale for Filtering Decisions
 
-## f1 Overall association score threshold:
+This section documents the rationale behind the filtering choices used to construct and compare filtered versions of the Open Targets gene–disease graph.
 
-The rationale here for using multiple thresholds is found here https://academic.oup.com/bioinformatics/article/41/7/btaf383/8177146?login=false
-as there is no consensus.
-Despite this, the non-linearity hypothesis (H2) should hold across all three.
+The goal is not to define one “correct” filter, but to test whether common filtering decisions systematically change which genes remain eligible for downstream analysis.
 
-Here, we use three threshold scores based on the literature.
-1. 0.2 used in the AstraZeneca Mantis-ML 2.0 paper: https://www.science.org/doi/10.1126/sciadv.adj1424.
-2. 0.5 an arbitrary middle.
-3. 0.8
+---
 
-## F2 multi-source threshold
-The common practice is "≥2 independent lines of evidence," which mirrors the ClinGen gene-disease validity 
-framework (a well-cited curation standard from Strande et al., AJHG 2017)
+## F1: Overall Association Score Threshold
 
-## F3 largest connected component
-No threshold. Largest component will be taken.
+**Filter definition:**  
+Retain target–disease associations whose Open Targets overall association score is greater than or equal to a chosen threshold.
+
+The Open Targets overall association score summarizes the evidence supporting a target–disease association across data sources. Open Targets notes that deciding what constitutes a “strong” association is open to interpretation, because association scores are heuristic summaries of available evidence rather than direct measures of biological truth. Because there is no single universally accepted threshold, this analysis uses multiple thresholds rather than relying on one cutoff. This choice is also consistent with the design of disease-specific knowledge graph workflows such as KGG, where users can inspect the Open Targets association score distribution and choose a desired score threshold.
+
+**Rationale sources:**
+- [Open Targets Platform documentation: Target–disease association scores](https://platform-docs.opentargets.org/associations)
+- [Karki et al., 2025. *KGG: a fully automated workflow for creating disease-specific knowledge graphs*. Bioinformatics.](https://doi.org/10.1093/bioinformatics/btaf383)
+
+### Thresholds Used
+
+Three F1 thresholds are used:
+
+| Threshold | Interpretation | Rationale |
+|---:|---|---|
+| `≥ 0.2` | Permissive | Used in the [AstraZeneca Mantis-ML 2.0](https://www.science.org/doi/10.1126/sciadv.adj1424) paper for selecting Open Targets seed genes. |
+| `≥ 0.5` | Default / middle | A moderate cutoff used as a middle point between permissive and stringent filtering. |
+| `≥ 0.8` | Stringent | A high-confidence cutoff that retains only strong Open Targets associations. |
+
+**Additional rationale source for `0.2`:**
+
+- [Middleton et al., 2024. *Phenome-wide identification of therapeutic genetic targets, leveraging knowledge graphs, graph neural networks, and UK Biobank data*. Science Advances.](https://www.science.org/doi/10.1126/sciadv.adj1424)
+
+The non-linearity hypothesis (H2) should be evaluated across all three thresholds. In other words, if stacked filters create a narrower or more canonical surviving gene set than expected, that pattern should not depend entirely on one arbitrary score cutoff.
+
+---
+
+## F2: Multi-Source Threshold
+
+**Filter definition:**  
+Retain target–disease associations supported by at least `N` independent evidence sources or evidence types. The rationale is that associations supported by multiple evidence streams are usually treated as more reliable than associations supported by only one source.
+
+This follows the broader logic of evidence-based gene-disease curation frameworks, especially the ClinGen gene-disease validity framework, which evaluates gene-disease validity using multiple categories of evidence rather than relying on a single observation.
+
+For this project, the filter operationalizes that idea as a source-count threshold.
+
+**Rationale source:**
+
+- [Strande et al., 2017. *Evaluating the Clinical Validity of Gene-Disease Associations: An Evidence-Based Framework Developed by the Clinical Genome Resource*. American Journal of Human Genetics.](https://doi.org/10.1016/j.ajhg.2017.04.015)
+
+| Setting | Source/Data-Type Requirement |
+|---|---|
+| Permissive (Default) | `≥ 2` sources |
+| Stringent | `≥ 3` sources |
+
+The `≥ 2` rule captures the common intuition of requiring more than one independent line of evidence.
+The `≥ 3` rule is used as a stricter version to test whether requiring broader support disproportionately removes lower-attention or less canonical genes.
+
+---
+
+## F3: Largest Connected Component
+
+**Filter definition:**  
+After constructing the graph, retain only the largest connected component. No numeric threshold is used. This is a structural graph filter rather than an evidence-score filter. It removes isolated nodes and small disconnected components, keeping the main connected body of the graph.
+
+The rationale is that many graph-based downstream analyses, such as path-based reasoning, network propagation, centrality analysis, and embedding methods, often operate most naturally on the largest connected component.
+
+However, this filter may also introduce bias because genes outside the largest connected component may be systematically less studied, less annotated, or less connected to canonical disease biology.
+
+### Rule Used
+
+```text
+Retain nodes and edges in the largest connected component only.
+```
+
+---
+
+## F4: Biotype / Type Constraint
+
+**Filter definition:**  
+Apply node-type and edge-type constraints to restrict the graph to a more conventional target–disease structure.
+
+### Node Constraint
+
+Retain only protein-coding targets.
+
+```text
+biotype == "protein_coding"
+```
+
+This focuses the analysis on the target class most commonly used in therapeutic target discovery and gene prioritization.
+
+### Edge Constraint
+
+Retain only gene–disease association edges.
+
+This removes other possible relationship types and keeps the analysis focused on target/gene associations with diseases.
+
+### Stringent Variant
+
+The stringent version additionally restricts evidence to genetic evidence only.
+
+```text
+biotype == "protein_coding"
+AND data_type == "Genetic association"
+```
+
+This tests whether filtering to genetically supported protein-coding targets creates a much narrower and more canonical surviving gene set.
+
+**Relevant source:**
+
+- [Open Targets Platform documentation: Target–disease evidence and data types](https://platform-docs.opentargets.org/evidence)
+
+---
 
 ## F4 biotype / type constraint
 1. Node constraint: protein-coding only.
 2. Edge constraint: gene association only.
 
+# Filter Settings
 
-| | F1 | F2 | F4 |
-|---|---|---|---|
-| Permissive | ≥ 0.2 | ≥ 2 sources | protein-coding |
-| Default | ≥ 0.5 | ≥ 2 sources | protein-coding |
-| Stringent | ≥ 0.8 | ≥ 3 sources | protein-coding + genetics-only |
+| Setting | F1: Overall Score | F2: Source/Data-Type Support | F3: Graph Structure | F4: Type Constraint |
+|---|---:|---:|---|---|
+| Permissive | `≥ 0.2` | `≥ 2` sources | largest connected component | protein-coding |
+| Default | `≥ 0.5` | `≥ 2` sources | largest connected component | protein-coding |
+| Stringent | `≥ 0.8` | `≥ 3` sources | largest connected component | protein-coding + genetics-only |
 
+---
+
+# Hypothesis Connection
+
+These filters are used to test whether common graph construction and filtering decisions are neutral.
+
+The key hypotheses are:
+
+1. **H1: Filtering bias exists**  
+   Each common filter may preferentially retain high-attention or canonical genes.
+
+2. **H2: Non-linear compounding**  
+   Stacked filters may retain a narrower gene set than expected from the individual filters alone.
+
+3. **H3: Structural counterfactual**  
+   Some genes may under-survive relative to what would be expected from research attention alone.
+
+The main expectation is that the non-linearity hypothesis should hold across the permissive, default, and stringent filter settings.

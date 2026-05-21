@@ -73,6 +73,11 @@ However, this filter may also introduce bias because genes outside the largest c
 Retain nodes and edges in the largest connected component only.
 ```
 
+**Rationale sources:**
+
+- [Barabási, *Network Science*, Chapter 3](https://networksciencebook.com/chapter/3)
+- [NetworkX documentation: `connected_components`](https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.components.connected_components.html)
+- [Li et al., 2024. *Contextual AI models for single-cell protein biology*. Nature Methods.](https://www.nature.com/articles/s41592-024-02341-3)
 ---
 
 ## F4: Biotype / Type Constraint

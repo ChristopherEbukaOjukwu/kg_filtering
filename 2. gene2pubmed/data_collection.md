@@ -250,7 +250,7 @@ This means the attention file contained 281 duplicate `ensembl_id` rows.
 
 ### Why Duplicates Occur
 
-A few hundred genes map to multiple NCBI Gene IDs in `gene2ensembl`.
+A few hundred genes map to multiple NCBI Gene IDs in `gene2ensembl`.  Specifically, Ensembl and NCBI independently identify and annotate genes, particularly non-coding RNAs and pseudogenes. if one gene model is split into two or more distinct genes in the NCBI database but kept as a single, contiguous gene in Ensembl, a 1:many map occurs.
 
 This can happen because of:
 - alternative loci
@@ -268,7 +268,7 @@ instead of collapsing to one row per Ensembl gene.
 
 ### Deduplication Fix
 
-To fix this, the attention table should be deduplicated by summing publication counts across NCBI Gene IDs that map to the same Ensembl gene.
+To fix this, the attention table is deduplicated by summing publication counts across NCBI Gene IDs that map to the same Ensembl gene.
 
 This keeps the data rather than dropping duplicate mappings.
 

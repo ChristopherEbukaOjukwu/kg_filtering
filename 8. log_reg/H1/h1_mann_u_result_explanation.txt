@@ -1,24 +1,129 @@
-What the table shows
-Filter   Δ log-units    Cliff δ    Interpretation
-F1            1.720       0.636    Survivors have ~5.6× more publications than dropped
-F2            2.158       0.780    Survivors have ~8.7× more publications than dropped
-F4            2.465       0.835    Survivors have ~11.7× more publications than dropped
-All three filters exceed your preregistered threshold (Δ ≥ 0.5 log-units) by 3-5×. All three p-values are computationally 
-indistinguishable from zero. Cliff's δ values of 0.6-0.8 are very large effects by conventional standards (anything above 0.474 is "large").
-H1 is supported decisively for every filter.
+# What the Table Shows
 
-The F4 result is the most interesting finding here
-Look at the ordering. The largest attention bias comes from F4 (protein-coding only), not from F1 or F2. 
-The filter that's supposed to be a biotype restriction — categorically different from "evidence quality" — actually carries a 
-bigger attention gap than either evidence-based filter.
-The numbers in plain terms:
-Protein-coding survivors have a mean log-pubs of 3.80 (~45 publications per gene).
-Non-protein-coding dropped have a mean log-pubs of 1.34 (~3.8 publications per gene).
-This is the "curation infrastructure bias" we discussed earlier, now quantified at the cleanest possible level. The biotype filter, 
-framed as a categorical structural restriction, is in practice an attention filter — because the same forces that drive what gets 
-named "protein-coding" also drive what gets published.
+## H1 Effect-Size Results
 
-A subtlety worth flagging in your methods
-The F4 result has a measurement artifact embedded in it. Recall from earlier: protein-coding genes had 97% gene2pubmed coverage, lncRNAs 
-had 20%, pseudogenes ~30%. Some of the F4 attention gap reflects differential curation of publication counts, not differential underlying 
-research interest.
+| Filter | Δ Log-Units | Cliff’s δ | Interpretation |
+|---|---:|---:|---|
+| F1 | 1.720 | 0.636 | Survivors have ~5.6× more publications than dropped genes |
+| F2 | 2.158 | 0.780 | Survivors have ~8.7× more publications than dropped genes |
+| F4 | 2.465 | 0.835 | Survivors have ~11.7× more publications than dropped genes |
+
+All three filters exceed the preregistered threshold:
+
+```text
+Δ ≥ 0.5 log-units
+```
+
+by approximately:
+
+```text
+3× to 5×
+```
+
+All three p-values are computationally indistinguishable from zero.
+
+Cliff’s δ values between:
+
+```text
+0.6 and 0.8
+```
+
+represent very large effects by conventional standards.
+
+A common guideline is:
+
+```text
+Cliff’s δ > 0.474 = large effect
+```
+
+Therefore:
+
+```text
+H1 is supported decisively for every tested filter.
+```
+
+---
+
+# The F4 Result Is the Most Interesting Finding
+
+The ordering of effects is important.
+
+The largest attention-associated retention effect comes from:
+
+```text
+F4: protein-coding only
+```
+
+not from F1 or F2.
+
+This matters because F4 is supposed to be a biotype restriction, not an evidence-quality filter.
+
+In other words:
+
+```text
+F4 is categorically different from evidence-strength or multi-source filters,
+but it carries a larger attention gap than either evidence-based filter.
+```
+
+---
+
+## F4 in Plain Terms
+
+| Group | Mean `log(pubs + 1)` | Approx. Publications per Gene |
+|---|---:|---:|
+| Protein-coding survivors | 3.80 | ~45 |
+| Non-protein-coding dropped genes | 1.34 | ~3.8 |
+
+This means protein-coding genes are much more heavily published than the non-protein-coding genes removed by F4.
+
+The key interpretation is:
+
+```text
+A biotype filter can behave like an attention filter.
+```
+
+Even though F4 does not explicitly use publication count, it strongly separates high-attention genes from low-attention genes.
+
+---
+
+# Interpretation
+
+This result supports the idea of attention-associated retention.
+
+The filters retain mostly well-published genes even when publication count is not directly used as a filtering criterion.
+
+The F4 result is especially important because it shows that a categorical structural restriction can still reproduce publication-attention patterns.
+
+In simple terms:
+
+```text
+The graph is already organized around well-published, protein-coding genes.
+```
+
+So when we filter to protein-coding genes, we are not only applying a biological category restriction, but we are also selecting a part of the gene space that is much more studied, better curated, and more visible in biomedical databases.
+
+---
+
+# Methods Caveat
+
+The F4 result should be interpreted with one important caveat.
+
+Some of the F4 attention gap may reflect a measurement artifact.
+
+Earlier mapping results showed that `gene2pubmed` coverage differs strongly by biotype:
+
+| Biotype | Approximate `gene2pubmed` Coverage |
+|---|---:|
+| Protein-coding genes | ~97% |
+| lncRNAs | ~20% |
+| Pseudogenes | ~30% |
+
+This means the publication-count measure itself is better captured for protein-coding genes than for many non-protein-coding genes.
+
+Therefore, part of the F4 attention gap may reflect differential curation of publication counts, not only differences in underlying research interest.
+
+A conservative interpretation is:
+
+```text
+F4 strongly separates genes with high measured publication attention from genes with low measured publication attention, but some of this gap may reflect differential identifier mapping and publication-count coverage across biotypes.
+```

@@ -1,18 +1,29 @@
-# Data Collection For Gene2Pubmed
+# Data Collection
 
-> NCBI publishes gene2pubmed as a single flat file: one row per (gene, paper) pair. This is then aggregated to per-gene counts. 
-> The Ensembl mapping is already inside the Target file via dbXrefs, so no extra mapping table is needed.
->
+NCBI publishes `gene2pubmed` as a single flat file with one row per `(gene, paper)` pair. This file is aggregated into per-gene publication counts. The Ensembl mapping is already available through the Open Targets Target file via `dbXrefs`, so no extra mapping table is needed beyond mapping NCBI Gene IDs to Ensembl IDs.
 
-gene2pubmed     →  pub_counts (NCBI Gene ID → n_publications)
-                                    ↓
-                            JOIN on NCBI Gene ID
-                                    ↓
-gene2ensembl    →  ensembl_to_ncbi (NCBI Gene ID ↔ Ensembl ID)
-                                    ↓
-                            JOIN on Ensembl ID
-                                    ↓
-OT Target file  →  final gene_attention table (Ensembl ID → n_publications)
+---
+
+## Overall Workflow
+
+```text
+gene2pubmed
+    ↓
+pub_counts
+NCBI Gene ID → n_publications
+    ↓
+JOIN on NCBI Gene ID
+    ↓
+gene2ensembl
+NCBI Gene ID ↔ Ensembl ID
+    ↓
+JOIN on Ensembl ID
+    ↓
+OT Target file
+    ↓
+final gene_attention table
+Ensembl ID → n_publications
+```
 
 ## Step 1 Download.
 The file used was gotten from https://ftp.ncbi.nlm.nih.gov/gene/DATA/:

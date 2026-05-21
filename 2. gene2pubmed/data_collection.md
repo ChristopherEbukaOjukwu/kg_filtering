@@ -231,9 +231,9 @@ The `gene_attention.parquet` file contains:
 ```text
 38,548 rows
 ```
-Each row corresponds to one Ensembl ID that successfully mapped through `gene2ensembl`. These 38,548 Ensembl IDs are all targets in the Open Targets vocabulary, but they are not all Open Targets targets.
+The `gene_attention.parquet` file contains only the Open Targets genes that could be mapped from NCBI Gene IDs to Ensembl IDs. Therefore, all 38,548 Ensembl IDs in `gene_attention.parquet` are valid Open Targets targets, but they represent only a subset of the full 78,691 Open Targets Target file.
 
-The OT Target file has ~78,691 targets. The gene_attention.parquet has 38,548. The missing ~40,000 are the targets that didn't map to NCBI Gene IDs — mostly lncRNAs (28,000 unmapped), pseudogenes (~9,000 unmapped), and a handful of others.
+The OT Target file has ~78,691 targets. The gene_attention.parquet has 38,548. The missing ~40,000 are the targets that didn't map to NCBI Gene IDs, which are mostly lncRNAs (28,000 unmapped), pseudogenes (~9,000 unmapped), and a handful of others.
 
 
 ### The following issue was found:

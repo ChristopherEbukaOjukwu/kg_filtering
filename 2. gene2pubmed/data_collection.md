@@ -146,34 +146,28 @@ After mapping NCBI Gene IDs to Ensembl IDs:
 | 38,548 | 38,267 | 38,516 |
 
 ### Mapping Coverage by Biotype
-┌────────────────────────────────────┬─────────┬──────────┬────────────┐
-│              biotype               │ n_total │ n_mapped │ pct_mapped │
-│              varchar               │  int64  │  int128  │   double   │
-├────────────────────────────────────┼─────────┼──────────┼────────────┤
-│ lncRNA                             │   35100 │     6932 │       19.7 │
-│ protein_coding                     │   20158 │    19530 │       96.9 │
-│ processed_pseudogene               │    9487 │     3832 │       40.4 │
-│ misc_RNA                           │    2207 │      942 │       42.7 │
-│ unprocessed_pseudogene             │    1949 │      859 │       44.1 │
-│ snRNA                              │    1901 │     1839 │       96.7 │
-│ miRNA                              │    1879 │     1847 │       98.3 │
-│ transcribed_unprocessed_pseudogene │    1587 │      376 │       23.7 │
-│ transcribed_processed_pseudogene   │    1149 │      338 │       29.4 │
-│                                    │    1019 │       19 │        1.9 │
-│    ·                               │       · │        · │         ·  │
-│    ·                               │       · │        · │         ·  │
-│    ·                               │       · │        · │         ·  │
-│ ribozyme                           │       8 │        5 │       62.5 │
-│ TR_C_gene                          │       6 │        5 │       83.3 │
-│ sRNA                               │       5 │        1 │       20.0 │
-│ TR_D_gene                          │       5 │        5 │      100.0 │
-│ vault_RNA                          │       4 │        4 │      100.0 │
-│ TR_J_pseudogene                    │       4 │        4 │      100.0 │
-│ IG_J_pseudogene                    │       3 │        3 │      100.0 │
-│ translated_processed_pseudogene    │       2 │        1 │       50.0 │
-│ Mt_rRNA                            │       2 │        2 │      100.0 │
-│ IG_pseudogene                      │       1 │        0 │        0.0 │
-└────────────────────────────────────┴─────────┴──────────┴────────────┘
+| Biotype | Total | Mapped | Percent Mapped |
+|---|---:|---:|---:|
+| `lncRNA` | 35,100 | 6,932 | 19.7 |
+| `protein_coding` | 20,158 | 19,530 | 96.9 |
+| `processed_pseudogene` | 9,487 | 3,832 | 40.4 |
+| `misc_RNA` | 2,207 | 942 | 42.7 |
+| `unprocessed_pseudogene` | 1,949 | 859 | 44.1 |
+| `snRNA` | 1,901 | 1,839 | 96.7 |
+| `miRNA` | 1,879 | 1,847 | 98.3 |
+| `transcribed_unprocessed_pseudogene` | 1,587 | 376 | 23.7 |
+| `transcribed_processed_pseudogene` | 1,149 | 338 | 29.4 |
+| missing/blank biotype | 1,019 | 19 | 1.9 |
+| `ribozyme` | 8 | 5 | 62.5 |
+| `TR_C_gene` | 6 | 5 | 83.3 |
+| `sRNA` | 5 | 1 | 20.0 |
+| `TR_D_gene` | 5 | 5 | 100.0 |
+| `vault_RNA` | 4 | 4 | 100.0 |
+| `TR_J_pseudogene` | 4 | 4 | 100.0 |
+| `IG_J_pseudogene` | 3 | 3 | 100.0 |
+| `translated_processed_pseudogene` | 2 | 1 | 50.0 |
+| `Mt_rRNA` | 2 | 2 | 100.0 |
+| `IG_pseudogene` | 1 | 0 | 0.0 |
 
  Full table:
 
@@ -184,35 +178,29 @@ After mapping NCBI Gene IDs to Ensembl IDs:
 ---
 
 ### Most Published Genes in `gene_attention.parquet`
-┌────────────────┬────────────────┬────────────────┐
-│ approvedSymbol │    biotype     │ n_publications │
-│    varchar     │    varchar     │     int64      │
-├────────────────┼────────────────┼────────────────┤
-│ TP53           │ protein_coding │          11627 │
-│ EGFR           │ protein_coding │           6684 │
-│ TNF            │ protein_coding │           6446 │
-│ IL6            │ protein_coding │           5468 │
-│ APOE           │ protein_coding │           5224 │
-│ VEGFA          │ protein_coding │           5213 │
-│ TGFB1          │ protein_coding │           5007 │
-│ HIF1A          │ protein_coding │           3912 │
-│ MTHFR          │ protein_coding │           3863 │
-│ AKT1           │ protein_coding │           3746 │
-│ STAT3          │ protein_coding │           3705 │
-│ ESR1           │ protein_coding │           3640 │
-│ IL10           │ protein_coding │           3485 │
-│ BRCA1          │ protein_coding │           3449 │
-│ NFKB1          │ protein_coding │           3396 │
-└────────────────┴────────────────┴────────────────┘
+| Approved Symbol | Biotype | Number of Publications |
+|---|---|---:|
+| `TP53` | `protein_coding` | 11,627 |
+| `EGFR` | `protein_coding` | 6,684 |
+| `TNF` | `protein_coding` | 6,446 |
+| `IL6` | `protein_coding` | 5,468 |
+| `APOE` | `protein_coding` | 5,224 |
+| `VEGFA` | `protein_coding` | 5,213 |
+| `TGFB1` | `protein_coding` | 5,007 |
+| `HIF1A` | `protein_coding` | 3,912 |
+| `MTHFR` | `protein_coding` | 3,863 |
+| `AKT1` | `protein_coding` | 3,746 |
+| `STAT3` | `protein_coding` | 3,705 |
+| `ESR1` | `protein_coding` | 3,640 |
+| `IL10` | `protein_coding` | 3,485 |
+| `BRCA1` | `protein_coding` | 3,449 |
+| `NFKB1` | `protein_coding` | 3,396 |
 
 ### Publication Count Summary
 
-┌───────┬───────────┬──────────────────┬─────────────┬──────────┐
-│ total │ zero_pubs │    mean_pubs     │ median_pubs │ max_pubs │
-│ int64 │  int128   │      double      │   double    │  int64   │
-├───────┼───────────┼──────────────────┼─────────────┼──────────┤
-│ 38548 │     10081 │ 52.3444017847878 │         7.0 │    11627 │
-└───────┴───────────┴──────────────────┴─────────────┴──────────┘
+| Total Genes | Genes with Zero Publications | Mean Publications | Median Publications | Maximum Publications |
+|---:|---:|---:|---:|---:|
+| 38,548 | 10,081 | 52.34 | 7.0 | 11,627 |
 
 
 

@@ -20,15 +20,15 @@ The Open Targets overall association score summarizes the evidence supporting a 
 ### Thresholds Used
 
 Three F1 thresholds are used:
-```
+
 | Threshold | Interpretation | Rationale |
 |---:|---|---|
-| `≥ 0.2` | Permissive | Used in the [AstraZeneca Mantis-ML 2.0](https://www.science.org/doi/10.1126/sciadv.adj1424) paper for selecting Open Targets seed genes. |
+| `≥ 0.2` | Permissive | Used in the AstraZeneca Mantis-ML 2.0 paper for selecting Open Targets seed genes. |
 | `≥ 0.5` | Default / middle | A moderate cutoff used as a middle point between permissive and stringent filtering. |
 | `≥ 0.8` | Stringent | A high-confidence cutoff that retains only strong Open Targets associations. |
-```
-**Additional rationale source for `0.2`:**
 
+**Additional rationale source for `0.2`:**
+- [AstraZeneca Mantis-ML 2.0](https://www.science.org/doi/10.1126/sciadv.adj1424)
 - [Middleton et al., 2024. *Phenome-wide identification of therapeutic genetic targets, leveraging knowledge graphs, graph neural networks, and UK Biobank data*. Science Advances.](https://www.science.org/doi/10.1126/sciadv.adj1424)
 
 The non-linearity hypothesis (H2) should be evaluated across all three thresholds. In other words, if stacked filters create a narrower or more canonical surviving gene set than expected, that pattern should not depend entirely on one arbitrary score cutoff.

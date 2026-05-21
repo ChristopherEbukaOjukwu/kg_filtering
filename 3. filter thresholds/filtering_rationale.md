@@ -116,11 +116,11 @@ This tests whether filtering to genetically supported protein-coding targets cre
 
 - [Open Targets Platform documentation: Target–disease evidence and data types](https://platform-docs.opentargets.org/evidence)
 
----
-
-## F4 biotype / type constraint
+### F4 biotype / type constraint
 1. Node constraint: protein-coding only.
 2. Edge constraint: gene association only.
+
+---
 
 # Filter Settings
 

@@ -1,16 +1,96 @@
-# Downloading the PPI data from OT
+# Downloading the PPI Data from Open Targets
 
-## Step 1 Download
-We use the OT molecular interaction (https://platform.opentargets.org/downloads) dataset:
-wget --recursive --no-parent --no-host-directories --cut-dirs 6 ftp://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/output/interaction .
+## Step 1: Download
 
-It is the  aggregated, deduplicated edge list; one row per (targetA, targetB, source_database) tuple, 
-which is what we need to compute degree.
+We use the Open Targets molecular interaction dataset:
 
-The computed degree is at: ppi_degree.parquet
+<https://platform.opentargets.org/downloads>
 
-When we build our H3 regression input table, this joins onto targetId / ensembl_id like everything else. Genes not in the PPI network get NULL and handled as COALESCE(ppi_degree, 0) or, more specifically, we treat "not in PPI" as a separate indicator variable (some genes legitimately have no known interactions, especially newly-annotated ones).
+Download command:
 
-## Two practical notes.
-The Open Targets interaction file aggregates multiple PPI databases (IntAct, Signor, Reactome, STRING). They have very different conventions, STRING in particular includes predicted and text-mined interactions with confidence scores, while IntAct is mostly curated experimental data. For a "high-confidence" PPI degree, we filter by sourceDatabase to just IntAct and Signor before computing degree. 
-Second: PPI degree is itself attention-correlated. Well-studied genes have more characterized interactions because someone went looking. So adding PPI as a covariate doesn't fully decouple from the attention proxy, it partially does. Constraint (gnomAD LOEUF) is cleaner in this regard since it's computed from sequence variation, not from researcher attention. If you only have time to add one structural covariate, constraint > PPI.
+```bash
+wget --recursive --no-parent --no-host-directories --cut-dirs 6 \
+ftp://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/output/interaction .
+```
+
+---
+
+## Dataset Description
+
+The Open Targets interaction file is an aggregated, deduplicated edge list.
+
+Each row represents one:
+
+```text
+(targetA, targetB, source_database)
+```
+
+tuple.
+
+This is the structure needed to compute PPI degree.
+
+The computed PPI degree table is saved as:
+
+```text
+ppi_degree.parquet
+```
+
+---
+
+## Joining PPI Degree to the H3 Regression Table
+
+When building the H3 regression input table, `ppi_degree.parquet` is joined onto the target table using:
+
+```text
+targetId / ensembl_id
+```
+
+This follows the same identifier logic as the other gene-level covariates.
+
+Genes that are not present in the PPI network will have missing PPI degree values.
+
+These is handled as:
+
+```sql
+COALESCE(ppi_degree, 0)
+```
+
+However, we treat “not in PPI network” as a separate indicator variable.
+
+This matters because some genes legitimately have no known interactions, especially newly annotated genes or less-studied genes.
+
+Example:
+
+```text
+ppi_degree = 0
+not_in_ppi = 1
+```
+
+This distinguishes genes with no observed PPI edges from genes whose degree is truly measured as zero.
+
+---
+
+# Practical Notes
+
+## 1. Source Databases Differ in Evidence Quality
+
+The Open Targets interaction file aggregates molecular interaction evidence from multiple PPI databases, including:
+
+- IntAct
+- SIGNOR
+- Reactome
+- STRING
+
+These sources have different conventions and evidence standards.
+
+For example, STRING includes predicted and text-mined interactions with confidence scores, while IntAct is mostly curated experimental interaction data.
+
+Therefore, for a stricter “high-confidence” PPI degree, we filter by:
+
+```text
+sourceDatabase ∈ {IntAct, SIGNOR}
+```
+
+before computing degree.
+
+This produces a more conservative interaction-degree covariate.

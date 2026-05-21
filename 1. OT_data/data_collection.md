@@ -76,7 +76,7 @@ The Open Targets target metadata file includes different gene biotypes, includin
 
 ---
 
-## Common Gene Biotypes
+### Common Gene Biotypes
 
 ### 1. `protein_coding`
 

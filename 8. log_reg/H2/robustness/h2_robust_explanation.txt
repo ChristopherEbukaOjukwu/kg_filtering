@@ -1,52 +1,208 @@
-This is a clean and decisive robustness result. H2 doesn't just survive across thresholds — its central finding *strengthens monotonically* as filters become more stringent.
+# H2 Robustness Results
 
-## What the robustness table shows
+This is a clean and decisive robustness result.
 
-**Fold-over-independence (model-free)** — the simplest version of the H2 finding:
+H2 does not just survive across thresholds. Its central finding strengthens monotonically as filters become more stringent.
 
+---
+
+## What the Robustness Table Shows
+
+### Fold-Over-Independence
+
+The simplest model-free version of the H2 finding is the fold-over-independence measure.
+
+| Threshold Setting | Fold Over Independence |
+|---|---:|
+| Permissive: F1 ≥ 0.2 | 4.2× |
+| Default: F1 ≥ 0.5 | 13.0× |
+| Stringent: F1 ≥ 0.8 | 25.8× |
+| Stringent F2: ≥ 3 sources | 56.3× |
+
+The fully stacked filter cell contains between:
+
+```text
+4× and 56×
 ```
-Threshold                    Fold over independence
-Permissive (F1≥0.2)          4.2×
-Default    (F1≥0.5)         13.0×
-Stringent  (F1≥0.8)         25.8×
-Stringent F2 (≥3 sources)   56.3×
+
+more pairs than independent filtering would predict, depending on the threshold setting.
+
+This means:
+
+```text
+The compounding effect is present across every setting tested.
 ```
 
-The fully-stacked filter cell has between 4× and 56× more pairs than independent filtering would predict, depending on threshold setting. **The "compounding" effect is real across every setting tested.** The chapter's claim is robust.
+Therefore, the H2 claim is robust.
 
-**F1×F2 interaction coefficient** is the most diagnostic:
+---
 
+# F1 × F2 Interaction Coefficient
+
+The F1 × F2 interaction coefficient is the most diagnostic H2 result.
+
+| Threshold Setting | β | exp(β) |
+|---|---:|---:|
+| Permissive | 2.00 | 7.4× |
+| Default | 3.30 | 27.1× |
+| Stringent | 10.46 | 35,030× |
+| Stringent F2 | 4.97 | 143× |
+
+---
+
+## Interpreting the Stringent F1 Result
+
+The stringent F1 setting produces an extreme coefficient:
+
+```text
+β = 10.46
+exp(β) = 35,030×
 ```
-Permissive:    β = 2.00,    exp(β) =       7.4×
-Default:       β = 3.30,    exp(β) =      27.1×
-Stringent:     β = 10.46,   exp(β) =  35,030×   ← driven by sparse cells
-Stringent F2:  β = 4.97,    exp(β) =     143×
+
+However, this value is driven by sparse cells, including three empty cells and the `+0.5` continuity correction.
+
+In practical terms, this means:
+
+```text
+The interaction is so strong that it cannot be precisely estimated.
 ```
 
-The Stringent F1 setting produces an extreme β = 10.5 / exp(β) = 35,030, but that number is being driven by the three empty cells and the +0.5 continuity correction. In practical terms it just means "the interaction is so strong it can't be precisely estimated — effectively all stringent-F1 survivors are also F2 survivors." Report it as "≥ 10" rather than as a specific value.
+A safer interpretation is:
 
-The Permissive setting (β = 2.0, exp(β) = 7.4) is the least extreme but still **way above your preregistered threshold of |β| ≥ 0.3**. Even at the most permissive published threshold, F1 and F2 co-survival is 7× the independence baseline.
+```text
+Effectively, all stringent-F1 survivors are also F2 survivors.
+```
 
-## A note on F1×F4 at the Permissive threshold
+Therefore, in the chapter, report this as:
 
-One unexpected pattern worth flagging: at F1≥0.2, the F1×F4 interaction (β = 3.67, exp = 39×) is *larger* than F1×F2. At Default and Stringent settings, F1×F2 dominates. At Permissive, F1×F4 dominates.
+```text
+β ≥ 10
+```
 
-The interpretation: when F1 is lenient (≥ 0.2), many non-protein-coding pairs creep in (lncRNAs with modest scores), so the F1×F4 interaction has more room to act — it picks up the strong filtering effect of "is this protein-coding *given* this is a strong-ish-evidence pair." When F1 is strict, almost all F1-passers are already protein-coding by construction, so F4 has less marginal work to do — the F1×F2 effect dominates instead.
+rather than treating `35,030×` as a precise value.
 
-This is a useful detail for the discussion. The dominant interaction term shifts with threshold, but the *existence* of strong non-linear compounding is invariant.
+---
 
-## How the chapter writes this up
+## Interpreting the Permissive Result
 
-Robustness section, succinct version:
+The permissive setting is the least extreme:
 
-> *To assess threshold dependence, we re-ran the factorial at three F1 thresholds spanning the range of values reported in published gene-disease KG analyses (0.2: Vitsios et al. 2024; 0.5: this work; 0.8: The Hyve 2024) and one alternative F2 specification (≥3 sources). The fully-stacked F1∧F2∧F4 cell contained between 4.2× and 56× more pairs than independent filtering would predict, with the over-representation increasing monotonically with filter stringency. All three pairwise interaction coefficients remained large and positive across all settings (|β| ≥ 1.2 in every case). The dominant interaction shifted with threshold — F1×F4 dominated at permissive settings, F1×F2 at default and stringent settings — but the overall pattern of non-linear compounding was invariant across the parameter range tested.*
+```text
+β = 2.00
+exp(β) = 7.4×
+```
 
-That's a defensible robustness result, and it pre-empts every reasonable methodological objection a reviewer would raise about your F1 = 0.5 choice.
+But this is still far above the preregistered H2 threshold:
 
-## Where you stand now
+```text
+|β| ≥ 0.3
+```
 
-- **H1:** ✓ supported, large effects across all filters
-- **H2:** ✓ supported at default, ✓ robust across permissive/stringent thresholds
-- **H3:** ✓ supported, substantial residual structure, interpretable under-survivor pattern
-- **F3 (LCC):** documented as near-null effect — methodological finding
-- **F4 (protein-coding):** acts as implicit attention filter as well as biotype filter
+Even at the most permissive threshold, F1 and F2 co-survival is approximately:
+
+```text
+7× higher than the independence baseline
+```
+
+So H2 is robust even under lenient filtering.
+
+---
+
+# Note on F1 × F4 at the Permissive Threshold
+
+One unexpected pattern is worth flagging.
+
+At the permissive threshold:
+
+```text
+F1 ≥ 0.2
+```
+
+the F1 × F4 interaction is larger than the F1 × F2 interaction.
+
+| Threshold Setting | Dominant Interaction |
+|---|---|
+| Permissive | F1 × F4 |
+| Default | F1 × F2 |
+| Stringent | F1 × F2 |
+
+At the permissive setting:
+
+```text
+F1 × F4: β = 3.67
+exp(β) = 39×
+```
+
+This is larger than F1 × F2 at the same threshold.
+
+---
+
+## Interpretation
+
+When F1 is lenient, many non-protein-coding pairs can enter the survivor set.
+
+For example:
+
+```text
+lncRNAs or other non-coding targets with modest association scores
+```
+
+This gives F4 more room to act.
+
+At this threshold, F4 captures the strong filtering effect of:
+
+```text
+Is this target protein-coding, given that it already has moderate association evidence?
+```
+
+When F1 becomes stricter, most F1-passers are already protein-coding.
+
+Therefore, F4 has less marginal work left to do, and F1 × F2 becomes the dominant interaction.
+
+The key point is:
+
+```text
+The dominant interaction shifts with threshold, but strong non-linear compounding remains present across all settings.
+```
+
+---
+
+# Chapter Write-Up Version
+
+> To assess threshold dependence, we re-ran the factorial analysis at three F1 thresholds spanning permissive, default, and stringent association-score cutoffs, as well as one alternative F2 specification requiring at least three sources. The fully stacked F1 ∧ F2 ∧ F4 cell contained between 4.2× and 56× more pairs than independent filtering would predict, with over-representation increasing monotonically with filter stringency. All three pairwise interaction coefficients remained large and positive across all settings, with |β| ≥ 1.2 in every case. The dominant interaction shifted with threshold: F1 × F4 dominated under permissive filtering, while F1 × F2 dominated under default and stringent filtering. However, the overall pattern of non-linear compounding was invariant across the tested parameter range.
+
+This result pre-empts the objection that the H2 finding depends on the specific choice of:
+
+```text
+F1 ≥ 0.5
+```
+
+---
+
+# Current Status of Hypotheses
+
+| Component | Status | Interpretation |
+|---|---|---|
+| H1 | Supported | Large attention-associated retention effects across filters |
+| H2 | Supported | Strong interactions at default settings |
+| H2 robustness | Supported | Effects persist across permissive and stringent thresholds |
+| H3 | Supported | Substantial residual structure and interpretable under-survivor pattern |
+| F3: LCC | Near-null effect | Open Targets graph is already essentially connected |
+| F4: protein-coding | Strong implicit attention filter | Acts as both a biotype filter and an attention-associated filter |
+
+---
+
+# Summary
+
+The robustness results strengthen the H2 claim.
+
+The core finding is not threshold-dependent.
+
+Across permissive, default, stringent, and stricter multi-source settings, stacked filters retain far more target–disease pairs than independence would predict.
+
+In simple terms:
+
+```text
+The filters do not combine additively.
+They compound.
+```

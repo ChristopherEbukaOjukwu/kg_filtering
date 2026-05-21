@@ -11,34 +11,6 @@ The main analysis uses the following filter settings:
 | **F3** | Restrict to the largest connected component | No threshold |
 | **F4** | `biotype = protein_coding` | Genetic-associations data type restriction |
 
----
-
-## Analysis Universe
-
-The analysis universe consists of all target–disease pairs in:
-
-```text
-association_overall_direct
-```
-
-restricted to mapped targets.
-
-Approximate mapped target universe:
-
-```text
-~28,000 targets after gene2ensembl mapping
-```
-
-For **H3**, the analysis is further restricted to targets with:
-
-```text
-n_publications > 0
-```
-
-This restriction is used to enable attention-based regression.
-
----
-
 # H1: Each Filter Individually Retains Higher-Attention Genes
 
 ## Claim

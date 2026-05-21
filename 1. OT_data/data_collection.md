@@ -1,6 +1,7 @@
 # Initial data collection from OT
 Three association datasets and a Target dataset were downloaded from the Open Targets Platform on **May 20, 2026**.
 **Source page:** <https://platform.opentargets.org/downloads>.
+**Open Targets release:** `26.03`
 
 ## Downloaded Datasets
 
@@ -55,14 +56,13 @@ This dataset provides metadata for target nodes, showing information about what 
 - approved symbol
 - target/gene annotations
   
-``
+
 Example:
-ENSG00000141510
-approved symbol: TP53
-biotype: protein_coding
-chromosome: 17
-protein class: transcription factor
-``
+- ENSG00000141510
+- approved symbol: TP53
+- biotype: protein_coding
+- chromosome: 17
+- protein class: transcription factor
 
 ```bash
 "wget --recursive --no-parent --no-host-directories --cut-dirs 6 ftp://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/output/target ."

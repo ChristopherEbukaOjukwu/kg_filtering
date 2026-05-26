@@ -1,5 +1,8 @@
 # What the Figure Shows
 
+Many papers across many diseases = may fail.
+Few papers but one strong disease link = may pass.
+
 The figure plots all:
 
 ```text

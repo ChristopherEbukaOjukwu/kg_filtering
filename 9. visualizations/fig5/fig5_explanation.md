@@ -1,37 +1,326 @@
-# What the figure shows
+# What the Figure Shows
 
-The figure plots all 17,793 protein-coding genes that have both Open Targets disease association data and an NCBI publication count, on a single panel that combines three pieces of information at once.
+The figure plots all:
 
-The **x-axis** is research attention, measured as log(publications + 1) from NCBI's gene2pubmed. Genes on the left have one or two papers about them; genes on the right have several thousand.
+```text
+17,793 protein-coding genes
+```
 
-The **y-axis** is the binary survival outcome under stacked filtering (F1: overall score ≥ 0.5; F2: ≥ 2 data sources; F4: protein-coding). A gene at y = 1 has at least one disease association that passes all three filters. A gene at y = 0 has no such association. Small vertical jitter is added so that the thousands of genes at each outcome value spread into a visible stripe rather than overlapping at a single line.
+that have both Open Targets disease-association data and an NCBI publication count.
 
-The **black curve** shows the model's predicted probability of survival as a function of log(publications), holding the structural covariates (constraint bin, PPI degree, chromosome) at typical values. This is what the chapter's H3 baseline model predicts. The curve has the classic logistic S-shape: nearly zero at the low-publication end (genes with 1-2 papers almost never have strong, multi-source disease evidence), rising through ~0.5 at moderate publication counts, asymptoting near 1.0 at the high-attention extreme.
+The panel combines three pieces of information:
 
-The **colors encode the residual** from the structural baseline. Red dots are genes that survive *less than the model predicts* (residual < -0.3). Blue dots are genes that survive *more than the model predicts* (residual > +0.3). Gray dots are the neutral majority where actual survival matches the baseline prediction within ±0.3.
+1. research attention;
+2. filter survival;
+3. residual status relative to the H3 baseline model.
 
+---
 
+## X-Axis: Research Attention
 
-## Reading the figure:
+The x-axis shows research attention, measured as:
 
-**Lower-right (red cluster).** The 4,004 under-survivor genes — 22.5% of the protein-coding population. Their distribution is striking: they pile up at moderate-to-high publication counts (log_pubs from ~3.5 to ~9), but their survival outcome is uniformly zero. The model predicts these genes *should* survive — based on their publication counts they're well above the curve's inflection point — but in practice they don't. The three labeled examples are at the extreme right: HIF1A, IFNG, and MDM2 each have thousands of associated publications and a high predicted probability of surviving filters, but none has any disease association that crosses both F1 and F2.
+```text
+log(publications + 1)
+```
 
-**Upper-left (blue cluster).** The 4,825 over-survivor genes — 27.1% of the population. These are the mirror-image case: low publication counts (log_pubs from ~1 to ~5) but actual survival. The model predicts they *shouldn't* survive (very low along the curve), but they do. The three labeled examples — OR10R2, GRXCR2, PRCD — each have fewer than five publications but managed to cross both F1 and F2. Mechanistically, this happens because a single high-quality curated source (typically a ClinGen Definitive or OMIM rare-disease entry) can push a gene over both thresholds even when broader research attention is minimal.
+Publication counts are derived from NCBI `gene2pubmed`.
 
-**The neutral majority (gray)** fades into the background, doing the visual work of showing where the prediction matches the data. The reader's eye naturally goes to the colored regions where the H3 story lives.
+Genes on the left have only one or two papers.
 
+Genes on the right have several thousand papers.
 
-## What the figure argues
+---
 
-The chapter's central claim about filters is that they don't simply select for "well-studied" genes — they select for genes whose study has crystallized into focused, source-diverse disease anchors. The H3 hero figure makes this visible in the lower-right red cluster.
+## Y-Axis: Filter Survival
 
-If filters were a clean attention proxy, every red dot would be missing. A high publication count would imply high survival. But many of the most-studied genes in human biology — master regulators, cytokines, MHC molecules, oncogenes — fail filter survival because their study is *broad* rather than *focused*. They show up in thousands of papers across hundreds of diseases, each appearance contributing a modest score and often only one source. The harmonic-sum scoring rewards concentration, and broadly-relevant biological hubs lack it.
+The y-axis shows the binary survival outcome under the stacked filter:
 
-Symmetrically, the upper-left blue cluster shows that even minimally-studied genes can survive filtering if their attention is concentrated in a single high-confidence curated source. OR10R2 is one of hundreds of olfactory receptors that appear in fewer than ten papers each; PRCD is associated with progressive rod-cone degeneration through a single ClinGen Definitive entry. Both pass F1 ∧ F2 not because they're well-studied but because the evidence they do have is sharp.
+```text
+F1 ∧ F2 ∧ F4
+```
 
-The figure therefore supports H3 not just numerically — 22.5% of the population is meaningfully under-predicted, 27.1% over-predicted — but mechanistically. The named genes in each cluster are recognizable archetypes of two different filter-survival modes, and the chapter's reader gets the structural point without needing to read the regression coefficients.
+where:
 
+```text
+F1 = overall association score ≥ 0.5
+F2 = ≥ 2 data sources
+F4 = biotype = protein_coding
+```
 
-## Caption
+A gene at:
 
-**Figure 5. Filter survival relative to the attention-adjusted baseline (H3).** Each point represents one of 17,793 protein-coding genes with available publication counts (NCBI gene2pubmed) and gnomAD loss-of-function constraint. The x-axis shows log(publications + 1) as a measure of research attention. The y-axis shows binary survival in the stacked filter F1 ∧ F2 ∧ F4 (F1: overall association score ≥ 0.5; F2: ≥ 2 distinct data sources; F4: biotype = protein_coding), with small vertical jitter added for visibility. The black curve shows the predicted probability of survival from a logistic regression baseline that combines attention, constraint, PPI degree, and chromosome (full model AUC = 0.77). Points are colored by residual: red points are under-survivors (residual < −0.3, n = 4,004; 22.5% of the population) — genes that the baseline predicts *should* survive but do not. Blue points are over-survivors (residual > +0.3, n = 4,825; 27.1%) — genes the baseline predicts *should not* survive but do. Gray points are neutral (n = 8,964). Three under-survivors representing distinct biological domains are labeled: **HIF1A** (master hypoxia regulator), **IFNG** (cytokine, immune signaling), **MDM2** (p53 regulator, oncology). Three over-survivors representing the mirror-image mechanism are labeled: **OR10R2** (olfactory receptor, minimal research attention), **GRXCR2** (hearing-loss gene with single ClinGen entry), **PRCD** (rare-disease gene with high-confidence curated source). The under-survivor population concentrates in the lower-right (high attention, no survival) — a structural feature inconsistent with the simple claim that filters retain well-studied genes. Filters instead retain genes whose evidence has consolidated into focused, source-diverse disease anchors; broadly-studied pleiotropic hub genes lack this concentration even when their cumulative publication record is large.
+```text
+y = 1
+```
+
+has at least one disease association that passes all three filters.
+
+A gene at:
+
+```text
+y = 0
+```
+
+has no disease association that passes all three filters.
+
+Small vertical jitter is added so that the thousands of genes at each outcome value appear as visible stripes instead of overlapping on a single line.
+
+---
+
+## Black Curve: Predicted Survival Probability
+
+The black curve shows the model’s predicted probability of survival as a function of:
+
+```text
+log(publications + 1)
+```
+
+while holding structural covariates at typical values.
+
+The structural covariates include:
+
+```text
+constraint bin
+PPI degree
+chromosome
+```
+
+This is the H3 baseline model.
+
+The curve has the expected logistic S-shape:
+
+- near zero at the low-publication end;
+- rising through moderate publication counts;
+- approaching one at the high-attention extreme.
+
+In simple terms:
+
+```text
+genes with very few publications are predicted to rarely survive,
+while highly published genes are predicted to survive more often.
+```
+
+---
+
+## Point Colors: Residuals
+
+Point color encodes the residual from the structural baseline model.
+
+Residual is defined as:
+
+```text
+actual survival - predicted survival probability
+```
+
+| Color | Residual Pattern | Meaning |
+|---|---|---|
+| Red | residual < -0.3 | under-survivors |
+| Blue | residual > +0.3 | over-survivors |
+| Gray | residual between -0.3 and +0.3 | neutral cases |
+
+---
+
+# Reading the Figure
+
+## Lower-Right: Under-Survivors
+
+The lower-right red cluster contains the under-survivor genes.
+
+There are:
+
+```text
+4,004 under-survivor genes
+```
+
+representing:
+
+```text
+22.5% of the protein-coding population
+```
+
+These genes have moderate-to-high publication counts:
+
+```text
+log_pubs ≈ 3.5 to 9
+```
+
+but their survival outcome is:
+
+```text
+0
+```
+
+The model predicts that many of these genes should survive based on their publication attention, but they do not.
+
+The labeled examples are:
+
+```text
+HIF1A
+IFNG
+MDM2
+```
+
+These genes each have thousands of associated publications and high predicted probabilities of surviving the filters.
+
+However, none has a disease association that crosses both F1 and F2.
+
+This is the key H3 under-survival pattern.
+
+---
+
+## Upper-Left: Over-Survivors
+
+The upper-left blue cluster contains the over-survivor genes.
+
+There are:
+
+```text
+4,825 over-survivor genes
+```
+
+representing:
+
+```text
+27.1% of the protein-coding population
+```
+
+These genes have low publication counts:
+
+```text
+log_pubs ≈ 1 to 5
+```
+
+but their survival outcome is:
+
+```text
+1
+```
+
+The model predicts that many of these genes should not survive based on their low publication attention, but they do.
+
+The labeled examples are:
+
+```text
+OR10R2
+GRXCR2
+PRCD
+```
+
+These genes each have very few publications but still pass F1 ∧ F2 ∧ F4.
+
+Mechanistically, this can happen when a gene has a focused, high-confidence curated disease association.
+
+For example, one strong curated source, such as ClinGen or OMIM, can push a gene over the evidence thresholds even when broader research attention is minimal.
+
+---
+
+## Gray Points: Neutral Majority
+
+The gray points represent genes whose observed survival status roughly matches the baseline model prediction.
+
+These are genes where:
+
+```text
+actual survival ≈ predicted survival
+```
+
+The gray points fade into the background so the reader’s attention is drawn to the red and blue residual regions, where the H3 result is most visible.
+
+---
+
+# What the Figure Argues
+
+The chapter’s central claim is that filters do not simply select for well-studied genes.
+
+Instead, filters select for genes whose evidence has crystallized into:
+
+```text
+focused
+source-diverse
+disease-specific anchors
+```
+
+The lower-right red cluster makes this visible.
+
+If filters were simply a clean proxy for research attention, the lower-right red region would be mostly empty.
+
+Highly published genes would almost always survive.
+
+But many highly published genes do not survive.
+
+These include:
+
+- master regulators;
+- cytokines;
+- MHC molecules;
+- oncogenes;
+- pleiotropic biological hubs.
+
+Their evidence is often broad rather than focused.
+
+They appear in thousands of papers across many disease contexts, but each disease-specific association may contribute only modest evidence or evidence concentrated in limited source types.
+
+The harmonic-sum scoring and multi-source filters reward concentrated disease-specific evidence.
+
+Broadly relevant biological hubs may lack that concentration.
+
+---
+
+# Mirror-Image Pattern
+
+The upper-left blue cluster shows the opposite pattern.
+
+Some minimally studied genes survive because their evidence is concentrated in a focused, high-confidence disease association.
+
+Examples:
+
+```text
+OR10R2
+GRXCR2
+PRCD
+```
+
+These genes may have very few publications, but their limited evidence is sharp, curated, and disease-specific.
+
+This means they can pass F1 ∧ F2 even without broad publication attention.
+
+---
+
+# Core Interpretation
+
+The figure supports H3 both numerically and mechanistically.
+
+Numerically:
+
+```text
+22.5% under-survivors
+27.1% over-survivors
+```
+
+Mechanistically:
+
+```text
+under-survivors = highly published, broad/diffuse evidence
+over-survivors = low-publication, focused/curated evidence
+```
+
+The main takeaway is:
+
+```text
+Filters privilege evidence concentration over publication volume.
+```
+
+Or, more explicitly:
+
+```text
+The filters do not simply retain well-studied genes.
+They retain genes whose disease evidence is focused, source-diverse, and curated.
+```
+
+---
+
+# Caption
+
+**Figure 5. Filter survival relative to the attention-adjusted baseline (H3).**  
+Each point represents one of 17,793 protein-coding genes with available publication counts from NCBI `gene2pubmed` and gnomAD loss-of-function constraint. The x-axis shows `log(publications + 1)` as a measure of research attention. The y-axis shows binary survival in the stacked filter F1 ∧ F2 ∧ F4, where F1 = overall association score ≥ 0.5, F2 = ≥ 2 distinct data sources, and F4 = `biotype = protein_coding`. Small vertical jitter is added for visibility. The black curve shows the predicted probability of survival from a logistic regression baseline that combines attention, constraint, PPI degree, and chromosome, with full-model AUC = 0.77. Points are colored by residual: red points are under-survivors, defined as residual < -0.3; blue points are over-survivors, defined as residual > +0.3; and gray points are neutral. Under-survivors include 4,004 genes, or 22.5% of the population; over-survivors include 4,825 genes, or 27.1%; neutral genes include 8,964 genes. Three under-survivors representing distinct biological domains are labeled: **HIF1A**, a master hypoxia regulator; **IFNG**, a cytokine involved in immune signaling; and **MDM2**, a p53 regulator in oncology. Three over-survivors representing the mirror-image mechanism are labeled: **OR10R2**, an olfactory receptor with minimal research attention; **GRXCR2**, a hearing-loss gene with focused curated evidence; and **PRCD**, a rare-disease gene with high-confidence curated evidence. The under-survivor population concentrates in the lower-right region, showing high attention but no filter survival. This pattern is inconsistent with the simple claim that filters retain well-studied genes. Instead, filters retain genes whose evidence has consolidated into focused, source-diverse disease anchors, while broadly studied pleiotropic hub genes may lack this concentration despite large cumulative publication records.

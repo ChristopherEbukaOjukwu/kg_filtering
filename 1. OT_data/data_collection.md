@@ -84,9 +84,8 @@ Protein-coding genes are transcribed into mRNA and then translated into proteins
 
 **Examples:**
 
-- `INS` — insulin
-- `HBB` — hemoglobin beta
-- `TP53`
+- `INS` insulin
+- `HBB` hemoglobin beta
 
 ---
 

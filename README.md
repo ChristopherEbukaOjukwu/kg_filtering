@@ -1,6 +1,6 @@
 # kg_filtering
 
-This repository contains the data-processing and analysis workflow for studying how common filters reshape Open Targets gene–disease knowledge graphs.
+This repository contains the data-processing and analysis workflow for studying how common filters reshape Open Targets gene-disease knowledge graphs.
 
 The project focuses on filters commonly used before downstream graph analysis, including:
 
